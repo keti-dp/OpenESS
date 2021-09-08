@@ -2,5 +2,5 @@
 
 
 
-참고논문: An Incremental Voltage Difference Based Technique for Online State of Health Estimation of Li-ion Batteries
-논문요약: 원격 SoH 추정 방법 제안
+- 참고논문: An Incremental Voltage Difference Based Technique for Online State of Health Estimation of Li-ion Batteries
+- 논문요약: 원격 SoH 추정 방법 제안
