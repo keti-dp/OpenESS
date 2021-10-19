@@ -22,7 +22,7 @@ if __name__ == "__main__":
     time_start = datetime.now()
 
     """데이터베이스 연결"""
-    #CONNECTION =
+    CONNECTION = "postgres://guest_user:guest1234!@1.214.41.250:5434/ESS_Operating_Site1"
     conn = psycopg2.connect(CONNECTION)
     cursor = conn.cursor()
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     """데이터 조회"""
     time_query_start = datetime.now()
     # ESS 뱅크 데이터
-    sql =  "SELECT * FROM rack limit 100"
+    sql =  "SELECT * FROM rack limit 1000000"
     df_rack = psql.read_sql(sql, conn)
     time_query_end = datetime.now()
     print(type(df_rack))
