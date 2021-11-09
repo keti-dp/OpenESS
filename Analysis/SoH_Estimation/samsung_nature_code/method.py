@@ -12,7 +12,7 @@ def get_capacity(batt_data, discharging = False):
     else:
         return capacity
 
-def get_Rf(volt_curr_data, init_data = True):
+def get_Rf(volt_curr_data):
     eod = np.argmin(volt_curr_data['Voltage_measured'])
     volt_eod = volt_curr_data['Voltage_measured'][eod]
     curr_eod = volt_curr_data['Current_measured'][eod]
