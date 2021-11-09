@@ -10,7 +10,7 @@ trainset = [("B0007","Battery_Data_Set"), ("B0005","Battery_Data_Set"), ("B0018"
 testset = [("B0006","Battery_Data_Set")]
 
 min_soc = 0.2
-max_soc = 0.6
+max_soc = 1
 
 soc_margin = 0.03 # soc 간격이 1.5%가 아니라 더 높게해야 잘나옴
 

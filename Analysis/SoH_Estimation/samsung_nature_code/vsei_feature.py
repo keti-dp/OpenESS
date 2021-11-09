@@ -7,7 +7,10 @@ def get_vsei_feature(data, dataset_name, is_testset = False):
     for i in range(len(dataset_name)):
         cycles = len(data['charge'][i])
         cmax = data['discharge'][i][0]['Capacity']
-        rf = get_Rf(data['charge'][i][0])
+        for j in range(cycles):
+            rf = get_Rf(data['discharge'][i][j])
+            if rf:
+                break
         for cycle, charge_data, discharge_data in zip(range(cycles),data['charge'][i],data['discharge'][i]):
             vsei_feature = get_Vsei(charge_data, rf)
 

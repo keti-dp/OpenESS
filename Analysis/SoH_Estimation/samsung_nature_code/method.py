@@ -13,22 +13,14 @@ def get_capacity(batt_data, discharging = False):
         return capacity
 
 def get_Rf(volt_curr_data, init_data = True):
-    if init_data:
-        tv = 0
-        ti = 0
-        for v,i in zip(volt_curr_data['Voltage_measured'], volt_curr_data['Current_measured']):
-            tv += v
-            ti += i
-        return tv/ti 
-    else: # 안됨
-        eod = np.argmin(volt_curr_data['Voltage_measured'])
-        volt_eod = volt_curr_data['Voltage_measured'][eod]
-        curr_eod = volt_curr_data['Current_measured'][eod]
-        sor = np.where(volt_curr_data['Current_measured'] > -0.1)[0]
-        for s in sor:
-            if s > 5:
-                volt_sor = volt_curr_data['Voltage_measured'][s]
-                return (volt_eod - volt_sor) / curr_eod
+    eod = np.argmin(volt_curr_data['Voltage_measured'])
+    volt_eod = volt_curr_data['Voltage_measured'][eod]
+    curr_eod = volt_curr_data['Current_measured'][eod]
+    sor = np.where(volt_curr_data['Current_measured'] > -0.1)[0]
+    for s in sor:
+        if s > eod + 5:
+            volt_sor = volt_curr_data['Voltage_measured'][s]
+            return (volt_eod - volt_sor) / curr_eod
         
 
 def get_SOC(batt_data,capacity):
@@ -51,7 +43,7 @@ def get_Vsei(data, r):
     cap = get_capacity(data)
     soc = get_SOC(data,cap)
 
-    volt_threshold = np.mean(data['Voltage_measured']) * 0.90 # 미정 // Vsei를 시작할 부분
+    volt_threshold = np.mean(data['Voltage_measured']) * 0 # 미정 // Vsei를 시작할 부분
     init_threshold = np.where(data['Voltage_measured'] > volt_threshold)[0]
     vsei = []
     temperature = []
@@ -61,7 +53,7 @@ def get_Vsei(data, r):
         if soc[i] > min_soc and soc[i] < max_soc and soc[i] >= (pre_soc + soc_margin):
             v = data['Voltage_measured'][i]
             curr = data['Current_measured'][i]
-            vsei.append(v - r*curr)
+            vsei.append(v - r * curr)
             temperature.append(data['Temperature_measured'][i])
             pre_soc = soc[i]
 
