@@ -8,7 +8,11 @@ OpenESS 저장소는 본 과제를 수행함에 있어 필요한 에너지 데�
 ![overview](https://user-images.githubusercontent.com/85736845/144805380-ed4c2986-8f8d-4a18-b0d1-6e282f6ef8c1.png)
 
 
-[공개SW 서비스](keti-dp.re.kr) : 공개SW 서비스를 위해 주관기관인 한국전자기술연구원에서 운영 및 관리하고 있는 사이트
+[공개SW 서비스](https://keti-dp.re.kr/) : 
+- 공개SW 서비스를 위해 주관기관인 한국전자기술연구원에서 운영 및 관리하고 있는 사이트입니다.
+- 가입을 원하시는 분께서는 아래의 주소로 본인의 소개와 목적을 포함한 자유양식으로 메일을 보내주세요.
+  * cwkim@keti.re.kr / 김창우 선임연구원 / 한국전자기술연구원
+- 내부 검토를 통해 서비스를 제공해드립니다.
 
 
 ## Acknowledgement
