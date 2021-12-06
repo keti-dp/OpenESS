@@ -1,5 +1,23 @@
 # -*- coding:utf-8 -*-
 
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 timescale_input_data.py 
+
+TimescaleDB에 대한 모듈 코드입니다.
+
+다음 세 가지 기능을 가지고 있습니다.
+
+1. hypertable create
+
+2. data input 
+
+3. data query 
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
 import psycopg2
 from datetime import date, datetime
 from psycopg2.extensions import AsIs

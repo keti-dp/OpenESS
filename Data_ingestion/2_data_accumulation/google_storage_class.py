@@ -1,29 +1,43 @@
 # -*-coding:utf-8-*-
 
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 google_storage_class.py 
+
+GCP Storage에 대한 모듈 코드입니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
+
 from google.cloud import storage
 from google.oauth2 import service_account
 import sys
 import time
 import os
 
+
 class google_cloud_storage:
     # google_cloud_storage 객체 생성
     def __init__(self, _PROJECT_NAME, _BUCKET_NAME, _CREDENTIAL_JSON_FILE_PATH=None):
         if _CREDENTIAL_JSON_FILE_PATH != None:
-            self.credentials = service_account.Credentials.from_service_account_file(_CREDENTIAL_JSON_FILE_PATH)
+            self.credentials = service_account.Credentials.from_service_account_file(
+                _CREDENTIAL_JSON_FILE_PATH
+            )
         else:
             # 인증관련 환경변수 등록 (https://cloud.google.com/docs/authentication/getting-started#auth-cloud-implicit-python)
             self.credentials = None
-        self.client = storage.Client(project = _PROJECT_NAME, credentials = self.credentials)
+        self.client = storage.Client(
+            project=_PROJECT_NAME, credentials=self.credentials
+        )
         self.bucket_name = _BUCKET_NAME
         self.bucket = self.client.bucket(self.bucket_name)
-    
 
     # client의 bucket 재지정
     def select_bucket(self, _BUCKET_NAME):
         self.bucket_name = _BUCKET_NAME
         self.bucket = self.client.bucket(self.bucket_name)
-        
 
     # client의 모든 bucket 리스트 반환
     def get_all_bucket(self):
@@ -31,7 +45,6 @@ class google_cloud_storage:
         for bucket in buckets:
             print(bucket.name)
         return buckets
-
 
     # 현재 지정된 client의 bucket 정보 출력
     def print_bucket_info(self):
@@ -59,13 +72,11 @@ class google_cloud_storage:
         print("Versioning Enabled: {}".format(self.bucket.versioning_enabled))
         print("Labels: %s" % self.bucket.labels)
 
-
     # 새 버킷 생성
     def create_new_bucket(self, _BUCKET_NAME):
         new_bucket = self.client.create_bucket(_BUCKET_NAME)
         print("Bucket {} created.".format(new_bucket.name))
         return new_bucket
-
 
     # 현재 client 버킷의 모든 객체 반환 (_prefix : 버킷내의 경로 필터링)
     def get_all_blob(self, _prefix=None):
@@ -74,17 +85,11 @@ class google_cloud_storage:
             print(blob.name)
         return blobs
 
-
     # 현재 client 버킷에 특정 파일 업로드
     def upload_to_bucket(self, destination_blob_name, source_file_path):
         blob = self.bucket.blob(destination_blob_name)
         blob.upload_from_filename(source_file_path)
-        print(
-        "File {} uploaded to {}.".format(
-            source_file_path, destination_blob_name
-            )
-        )
-
+        print("File {} uploaded to {}.".format(source_file_path, destination_blob_name))
 
     # 현재 client 버킷에 특정 객체(파일) 다운로드
     def download_blob(self, source_blob_name, destination_file_name):
@@ -92,8 +97,5 @@ class google_cloud_storage:
         blob.download_to_filename(destination_file_name)
 
         print(
-            "Blob {} downloaded to {}.".format(
-                source_blob_name, destination_file_name
-            )
+            "Blob {} downloaded to {}.".format(source_blob_name, destination_file_name)
         )
-

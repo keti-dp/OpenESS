@@ -1,3 +1,16 @@
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 gcp_storage.py 
+
+GCS에 만들어진 bucket에 파일을 업로드하는 모듈 코드입니다.
+
+프로젝트명, 버킷명, gcp 키를 통해 동작시킬 수 있습니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
+
 import sys
 
 sys.path.append("./")

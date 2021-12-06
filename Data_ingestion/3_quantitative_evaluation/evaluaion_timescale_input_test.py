@@ -1,5 +1,17 @@
 # -*- coding:utf-8 -*-
 
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 evaluaion_timescale_input_test.py 
+
+ESS 정량평가 중 데이터 처리 속도 평가를 위한 테스트 코드입니다. 
+
+데이터 저장 시 소요되는 시간을 측정합니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
 import psycopg2
 from datetime import date, datetime
 from psycopg2.extensions import AsIs

@@ -1,16 +1,27 @@
 #!/bin/python
-import time
+
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 gcs_data_accumulate.py 
+
+timescaleDB에 저장된 데이터를 gcs에 축적하는 코드입니다.
+
+수집된 데이터를 시간에 맞춰 csv 파일로 저장하고 
+
+저장된 csv파일을 gcs 버킷에 날짜별로 업로드합니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
 
 from datetime import datetime
 import datetime
-import time
 from pytz import timezone
-import multiprocessing
 from multiprocessing import Process
-
 from pytz import timezone
 import numpy as np
-import timescale_input_test
+import timescale_input_data
 import csv
 import os
 import gcp_storage
@@ -150,7 +161,7 @@ def csv_upload(tablename):
 
 if __name__ == "__main__":
 
-    timescale_test = timescale_input_test.timescale()
+    timescale_test = timescale_input_data.timescale()
 
     csv_export("bank")
     csv_export("rack")

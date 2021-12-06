@@ -1,8 +1,24 @@
 #!/bin/python
-from pyModbusTCP.client import ModbusClient
 
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 modebus_client_oper1.py 
+
+시온유 태양광 ESS데이터 수집을 위한 코드입니다.
+
+ModbusTCP 통신에 의해 1초 단위로 데이터가 수집되며 
+
+파싱해온 데이터를 저장규격에 맞게 필터링하고 재가공하여
+
+GCP 인스턴스에 구축된 Timescale DB에 저장합니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
+from pyModbusTCP.client import ModbusClient
 import time
-import timescale_input_test
+import timescale_input_data
 from datetime import datetime
 from multiprocessing import Process
 import threading
@@ -21,11 +37,6 @@ class ESS_Modbus:
     # 클라이언트 세팅
     def client_set(self, IP, PORT, ID):
         self.client = ModbusClient(IP, PORT, unit_id=ID)
-
-    # 저장 데이터 만들기
-    def storaging_data_make(self):
-
-        pass
 
     # 단순 데이터 파싱
     def data_parsing(self, partID):
@@ -267,7 +278,7 @@ def main():
     Bank_data, Rack_data = data_manipulation(list1, list2)
     PCS_data, ETC_data = list3, list4
 
-    timescale = timescale_input_test.timescale()
+    timescale = timescale_input_data.timescale()
     timescale.Bank_input_data(seoultime, Bank_data, operation_site)
     timescale.Rack_input_data(seoultime, Rack_data, operation_site)
     timescale.PCS_input_data(seoultime, PCS_data, operation_site)

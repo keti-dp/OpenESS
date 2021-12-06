@@ -1,4 +1,17 @@
 # -*- coding:utf-8 -*-
+
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 evaluaion_data_quality.py 
+
+ESS 정량평가 중 수집 데이터 품질 평가를 위한 테스트 코드입니다. 
+
+수집되는 데이터 중 이상데이터 수에 따른 데이터 정확도를 측정합니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
 import csv
 
 if __name__ == "__main__":

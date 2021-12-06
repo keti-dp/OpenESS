@@ -1,5 +1,17 @@
 # -*- coding:utf-8 -*-
 
+"""
+Copyright 2021, KETI.
+
+2021-12-06 ver 1.0 evaluaion_data_type.py 
+
+ESS 정량평가 중 수집 데이터 종류 평가를 위한 테스트 코드입니다. 
+
+수집되는 데이터 종류 수를 측정합니다.
+
+전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+"""
+
 import psycopg2
 import time
 import csv
