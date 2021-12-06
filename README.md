@@ -18,7 +18,10 @@
 	> 한국전자기술연구원 김창우 선임연구원 / cwkim@keti.re.kr
 
 ## Consortium
-<img src="https://user-images.githubusercontent.com/85736845/144812508-d13c61f4-6571-4804-95c6-466e2ea6d99e.png" height="100"/> <img src="https://user-images.githubusercontent.com/85736845/144812562-d14c6991-8560-4a2f-857c-dd42623a40ce.png" height="100"/> <img src="https://user-images.githubusercontent.com/85736845/144812590-5b90a2df-7726-43e4-85c4-d373730d9893.png" height="100"/> <img src="https://user-images.githubusercontent.com/85736845/144812674-17609e8f-655b-4476-afbf-e6ebf2f6d266.png" width="200" height="100"/> <img src="https://user-images.githubusercontent.com/85736845/144814576-4fc7c291-7cd8-46e1-bacc-368d535bb0c8.png" height="100"/>
+<img src="https://user-images.githubusercontent.com/85736845/144817095-ec5cdc5c-c252-404d-bda5-98318946ffb9.png" height="110" align="center">
+<p> 
+<img src="https://user-images.githubusercontent.com/85736845/144815291-c5ba491d-0227-46b6-b955-5bcb6e45401e.png" height="100" align="center"> &nbsp;&nbsp; <img src="https://user-images.githubusercontent.com/85736845/144812590-5b90a2df-7726-43e4-85c4-d373730d9893.png" width="200" height="100" align="center"> &nbsp;&nbsp; <img src="https://user-images.githubusercontent.com/85736845/144812674-17609e8f-655b-4476-afbf-e6ebf2f6d266.png" width="200" height="100" align="center"> &nbsp;&nbsp; <img src="https://user-images.githubusercontent.com/85736845/144814576-4fc7c291-7cd8-46e1-bacc-368d535bb0c8.png" height="100" align="center">
+</p>
 
 ## Acknowledgement
 This work was supported by Institute of Information & communications Technology Planning & Evaluation (IITP) grant funded by the Korea government(MSIT) (No.2021-0-00077, Development of intelligent SW framework for safe autonomous operation and performance evaluation of large-scale distributed energy storage infrastructure)
