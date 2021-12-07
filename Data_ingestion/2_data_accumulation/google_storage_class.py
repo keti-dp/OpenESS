@@ -1,9 +1,23 @@
 # -*-coding:utf-8-*-
 
 """
-Copyright 2021, KETI.
+google_storage_class.py : GCS(Google Cloud Storage) 모듈 코드
 
-2021-12-06 ver 1.0 google_storage_class.py 
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        아파치 라이선스 버전 2.0(라이선스)에 따라 라이선스가 부여됩니다.
+        라이선스를 준수하지 않는 한 이 파일을 사용할 수 없습니다.
+        다음에서 라이선스 사본을 얻을 수 있습니다.
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        관련 법률에서 요구하거나 서면으로 동의하지 않는 한 소프트웨어
+        라이선스에 따라 배포되는 것은 '있는 그대로' 배포되며,
+        명시적이든 묵시적이든 어떠한 종류의 보증이나 조건도 제공하지 않습니다.
+        라이선스에 따른 권한 및 제한 사항을 관리하는 특정 언어는 라이선스를 참조하십시오.
+
+최신 테스트 버전 : 1.0 ver
+최신 안정화 버전 : 1.0 ver
 
 GCP Storage에 대한 모듈 코드입니다.
 
