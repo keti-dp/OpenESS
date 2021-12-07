@@ -1,0 +1,68 @@
+LICENSE 
+
+프로젝트 중 아래에 파일에서 명시된 라이브러리에 대해 각각의 라이선스가 적용되어있습니다.
+
+logs.py - ecs_logging - Apache License 2.0
+
+modbus_client_oper1.py - pymodbusTCP - MIT License
+
+timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
+
+google_storage_class.py - storage - Apache License 2.0
+
+
+        ---------------------------------------------------------------------------
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        아파치 라이선스 버전 2.0(라이선스)에 따라 라이선스가 부여됩니다.
+        라이선스를 준수하지 않는 한 이 파일을 사용할 수 없습니다.
+        다음에서 라이선스 사본을 얻을 수 있습니다.
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        관련 법률에서 요구하거나 서면으로 동의하지 않는 한 소프트웨어
+        라이선스에 따라 배포되는 것은 '있는 그대로' 배포되며,
+        명시적이든 묵시적이든 어떠한 종류의 보증이나 조건도 제공하지 않습니다.
+        라이선스에 따른 권한 및 제한 사항을 관리하는 특정 언어는 라이선스를 참조하십시오.
+        ---------------------------------------------------------------------------
+
+        ---------------------------------------------------------------------------
+        The MIT License
+
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+        ---------------------------------------------------------------------------
+
+        ---------------------------------------------------------------------------
+        timescale_input_data.py : Timescale DB에 데이터를 입력하는 모듈 코드
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        이 프로그램은 자유 소프트웨어입니다. 당신은 자유 소프트웨어 재단이 공표한 GNU 일반 공중 라이선스 버전 2 또는 
+        그 이후 버전을 임의로 선택해서 그 규정에 따라 프로그램을 수정하거나 재배포할 수 있습니다.
+
+        이 프로그램은 유용하게 사용될 수 있을 것이라는 희망에서 배포되고 있지만 어떠한 형태의 보증도 제공하지 않습니다. 
+        상품성 또는 특정 목적 적합성에 대한 묵시적 보증 역시 제공하지 않습니다. 보다 자세한 내용은 GNU 일반 공중 라이선스를 참고하시기 바랍니다.
+
+        GNU 일반 공중 라이선스는 이 프로그램과 함께 제공됩니다. 만약, 라이선스를 받지 못했다면, 
+        자유 소프트웨어 재단으로 문의하기 바랍니다. 
+        주소: Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+        ---------------------------------------------------------------------------
+
+
