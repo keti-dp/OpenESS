@@ -1,9 +1,12 @@
 #!/bin/python
 
 """
-Copyright 2021, KETI.
+gcs_data_accumulate.py : csv추출 및 GCS 업로드 모듈 코드
 
-2021-12-06 ver 1.0 gcs_data_accumulate.py 
+Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+최신 테스트 버전 : 1.0 ver
+최신 안정화 버전 : 1.0 ver
 
 timescaleDB에 저장된 데이터를 gcs에 축적하는 코드입니다.
 
