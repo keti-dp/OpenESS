@@ -1,9 +1,50 @@
 #!/bin/python
 
 """
-Copyright 2021, KETI.
+modbus_client_oper1.py : 태양광 ESS 데이터 수집을 위한 코드
 
-2021-12-06 ver 1.0 modebus_client_oper1.py 
+        ---------------------------------------------------------------------------
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        아파치 라이선스 버전 2.0(라이선스)에 따라 라이선스가 부여됩니다.
+        라이선스를 준수하지 않는 한 이 파일을 사용할 수 없습니다.
+        다음에서 라이선스 사본을 얻을 수 있습니다.
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        관련 법률에서 요구하거나 서면으로 동의하지 않는 한 소프트웨어
+        라이선스에 따라 배포되는 것은 '있는 그대로' 배포되며,
+        명시적이든 묵시적이든 어떠한 종류의 보증이나 조건도 제공하지 않습니다.
+        라이선스에 따른 권한 및 제한 사항을 관리하는 특정 언어는 라이선스를 참조하십시오.
+        ---------------------------------------------------------------------------
+
+        ---------------------------------------------------------------------------
+        The MIT License
+
+        Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+        ---------------------------------------------------------------------------
+
+
+최신 테스트 버전 : 1.0 ver
+최신 안정화 버전 : 1.0 ver
 
 시온유 태양광 ESS데이터 수집을 위한 코드입니다.
 
@@ -14,13 +55,14 @@ ModbusTCP 통신에 의해 1초 단위로 데이터가 수집되며
 GCP 인스턴스에 구축된 Timescale DB에 저장합니다.
 
 전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
+       
+
 """
 
 from pyModbusTCP.client import ModbusClient
 import time
 import timescale_input_data
 from datetime import datetime
-from multiprocessing import Process
 import threading
 from pytz import timezone
 import numpy as np
