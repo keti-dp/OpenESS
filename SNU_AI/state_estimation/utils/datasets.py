@@ -29,12 +29,12 @@ class NasaDataset(Dataset):
             self.usable_id = list(map(int, set_type.split(',')))
         self.usable_id = np.array(self.usable_id)
         
-        dataset_dir = config.DATA_DIR
+        dataset_dir = config.PROCESSED_DATA_DIR
         battery_name = config.BATTERY_NAME
         
         self.dataframe = {}
         for _id in self.usable_id:
-            self.dataframe[_id] = pd.read_parquet(dataset_dir + battery_name[_id])[columns]
+            self.dataframe[_id] = pd.read_parquet(os.path.join(dataset_dir, battery_name[_id]))[columns]
         
         with np.load(config.CYCLE_INDEX_INFO) as data_infos:
             self.battery_id = data_infos['battery_id']

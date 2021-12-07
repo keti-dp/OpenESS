@@ -5,7 +5,7 @@ def parse_args():
     
     # General options
     parser.add_argument("--model", required=True, type=str,
-                        help="Name of model; nasa_lstm")
+                        help="Name of model; nasa_rnn/nasa_lstm")
     parser.add_argument("--device", default='cuda', type=str,
                         help="cuda or cpu")
     parser.add_argument("--dataset", default='nasa', type=str,
