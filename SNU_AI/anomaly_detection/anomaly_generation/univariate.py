@@ -1,6 +1,8 @@
+
 # Code based on: https://github.com/datamllab/tods/tree/benchmark/benchmark
 # Edited by: Eunseok Yang
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -15,49 +17,38 @@ def sine(length, freq=0.04, coef=1.5, offset=0.0, noise_amp=0.05):
     value = coef * value + offset
     return value
 
-# new plot presenting each outlier
-def plot(univariate_data):
-    colors = ['r', 'g', 'y', 'c', 'm']
-
-    fig, ax = plt.subplots(2, 1, figsize=(20, 10))
-    ax[0].plot(univariate_data.timestamp, univariate_data.data_origin)
-    ax[1].plot(univariate_data.timestamp, univariate_data.data)
-
-    for i, prime in enumerate([2, 3, 5, 7, 11]):
-        outlier = [j for j, label in enumerate(univariate_data.colored_label) if label%prime == 0]
-        ax[1].scatter(outlier, univariate_data.data[outlier], color=colors[i])
-
-    plt.legend([
-        'data', 'point global outlier', 'point contextual outlier', 'collective shaplet outlier', 
-        'collective trend outlier', 'collective seasonal outlier'
-        ], loc='lower right')
-
-    ax[0].set_title('Original data')
-    ax[1].set_title('Synthetic data')
-
-    plt.savefig('./sample_figure.png')
-    plt.show()
-
 class UnivariateDataGenerator:
-    def __init__(self, stream_length, behavior=sine, behavior_config=dict()):
-        self.STREAM_LENGTH = stream_length
-        self.behavior = behavior
-        self.behavior_config = behavior_config
+    def __init__(self):
+        self.STREAM_LENGTH = None
+        self.behavior_config = dict()
 
         self.data = None
         self.label = None
         self.data_origin = None
-        self.timestamp = np.arange(self.STREAM_LENGTH)
+        self.timestamp = None
 
-        self.generate_timeseries()
+    def generate_timeseries(self, stream_length, behavior=sine, behavior_config=dict()):
+        self.STREAM_LENGTH = stream_length
+        self.behavior = behavior
+        self.behavior_config = behavior_config
 
-    def generate_timeseries(self):
         self.behavior_config['length'] = self.STREAM_LENGTH
         self.data = self.behavior(**self.behavior_config)
         self.data_origin = self.data.copy()
+        self.timestamp = np.arange(self.STREAM_LENGTH)
 
         self.label = np.zeros(self.STREAM_LENGTH, dtype=int)
         self.colored_label = np.ones(self.STREAM_LENGTH, dtype=int)
+
+    def load_timeseries(self, ts):
+        self.data = ts
+        self.STREAM_LENGTH = len(ts)
+        self.data_origin = self.data.copy()
+        self.timestamp = np.arange(self.STREAM_LENGTH)
+
+        self.label = np.zeros(self.STREAM_LENGTH, dtype=int)
+        self.colored_label = np.ones(self.STREAM_LENGTH, dtype=int)
+        
 
     # Changed code following the original paper
     # X_t = \mu(X) +- \lambda*\sigma(X)
@@ -164,14 +155,37 @@ class UnivariateDataGenerator:
             self.label[start:end] = 1
             self.colored_label[start:end] *= 11
 
+    # new plot presenting each outlier
+    def plot(self):
+        colors = ['r', 'g', 'y', 'c', 'm']
+
+        fig, ax = plt.subplots(2, 1, figsize=(20, 10))
+        ax[0].plot(self.timestamp, self.data_origin)
+        ax[1].plot(self.timestamp, self.data)
+
+        for i, prime in enumerate([2, 3, 5, 7, 11]):
+            outlier = [j for j, label in enumerate(self.colored_label) if label%prime == 0]
+            ax[1].scatter(outlier, self.data[outlier], color=colors[i])
+
+        plt.legend([
+            'data', 'point global outlier', 'point contextual outlier', 'collective shaplet outlier', 
+            'collective trend outlier', 'collective seasonal outlier'
+            ], loc='lower right')
+
+        ax[0].set_title('Original data')
+        ax[1].set_title('Synthetic data')
+
+        plt.savefig('./sample_figure.png')
+        plt.show()
+
 if __name__ == '__main__':
     np.random.seed(100)
 
     BEHAVIOR_CONFIG = {'freq': 0.04, 'coef': 1.5, "offset": 0.0, 'noise_amp': 0.05}
     BASE = [0, 1]
 
-    univariate_data = UnivariateDataGenerator(stream_length=400, behavior=sine, behavior_config=BEHAVIOR_CONFIG)
-
+    univariate_data = UnivariateDataGenerator()
+    univariate_data.generate_timeseries(stream_length=400, behavior=sine, behavior_config=BEHAVIOR_CONFIG)
     
     univariate_data.collective_shapelet_outliers(ratio=0.05, radius=5, coef=1.5, noise_amp=0.03, base=BASE) #2
     univariate_data.collective_seasonal_outliers(ratio=0.05, factor=3, radius=5) #3
@@ -180,7 +194,7 @@ if __name__ == '__main__':
     univariate_data.point_global_outliers(ratio=0.05, factor=3.5, factor_noise_amp=0.1) #0
     univariate_data.point_contextual_outliers(ratio=0.05, factor=2.5, radius=5, factor_noise_amp=0.1) #1
     
-    plot(univariate_data)
+    univariate_data.plot()
 
     df = pd.DataFrame({'value': univariate_data.data, 'anomaly': univariate_data.label})
     df.to_csv('sample.csv', index=False)
