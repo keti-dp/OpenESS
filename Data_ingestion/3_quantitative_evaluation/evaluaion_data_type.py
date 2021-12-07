@@ -5,8 +5,8 @@ evaluaion_data_type.py : 대규모 분산 에너지 저장장치 과제 정량�
 
 Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
 
-최신 테스트 버전 : 1.0 ver
-최신 안정화 버전 : 1.0 ver
+최신 테스트 버전 : 1.0.0 ver
+최신 안정화 버전 : 1.0.0 ver
 
 ESS 정량평가 중 수집 데이터 종류 평가를 위한 테스트 코드입니다. 
 

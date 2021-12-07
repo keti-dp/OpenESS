@@ -3,8 +3,8 @@ gcp_storage.py : GCS(Google Cloud Storage) 파일 업로드 모듈
 
 Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
 
-최신 테스트 버전 : 1.0 ver
-최신 안정화 버전 : 1.0 ver
+최신 테스트 버전 : 1.0.0 ver
+최신 안정화 버전 : 1.0.0 ver
 
 GCS에 만들어진 bucket에 파일을 업로드하는 모듈 코드입니다.
 
