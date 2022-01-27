@@ -278,6 +278,14 @@ def data_manipulation(BMS1, BMS2):
     elif BMS2_data1[-1] == 1:
         BMS2_data1[-1] = 0
 
+    # Rack status for run 에 대한게 수정 필요
+    # Rack 개수가 8이니까 8반복
+    for i in range(8):
+        if BMS2_data2[5 + 29 * i] == 0:
+            BMS2_data2[5 + 29 * i] = 1
+        elif BMS2_data2[5 + 29 * i] == 1:
+            BMS2_data2[5 + 29 * i] = 0
+
     BANK = BMS1_data1 + BMS2_data1
 
     # print("BANK : ", BANK)
@@ -299,7 +307,7 @@ def data_manipulation(BMS1, BMS2):
 
 def main():
 
-    seoultime = datetime.now(timezone("asia/seoul"))
+    seoultime = datetime.now(timezone("asia/seoul")).replace(microsecond=0)
     # 운영사이트
     operation_site = "operation1"
 
