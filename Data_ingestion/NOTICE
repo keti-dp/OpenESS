@@ -11,7 +11,7 @@
 참고 및 출처 : https://semver.org/lang/ko/
 
 
-현재 버전 ver 1.1.4 / 2022년 01월 27일 14시 47분 기준
+현재 버전 ver 1.2.4 / 2022년 02월 21일 11시 20분 기준
 
 
 
@@ -21,6 +21,8 @@
 logs.py - ecs_logging - Apache License 2.0
 
 modbus_client_oper1.py - pymodbusTCP - MIT License
+modbus_client_oper2_bank1.py - pymodbusTCP - MIT License
+modbus_client_oper2_bank2.py - pymodbusTCP - MIT License
 
 timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
 
