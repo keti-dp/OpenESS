@@ -390,13 +390,14 @@ def data_manipulation(BMS1, BMS2, bank_id):
         rack_module_fault_dict = {}  # rack json
 
         for module_number in range(1, 21):
-            rack_module_fault_dict[module_number] = temp2[-20 + module_number - 1]
-
+            rack_module_fault_dict["module" + str(module_number)] = temp2[
+                -20 + module_number - 1
+            ]
         # json 대체
         temp2[-20] = json.dumps(rack_module_fault_dict)
         temp2_2 = temp2[0:-19]
 
-        bank_commuication_fault_dict[rack_number] = BMS2_bank[22 + i - 1]
+        bank_commuication_fault_dict["rack" + str(rack_number)] = BMS2_bank[22 + i - 1]
 
         temp3 = temp1 + temp2_2
         temp3.insert(0, rack_number)  # BANK, RACK ID 추가

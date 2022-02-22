@@ -21,6 +21,7 @@ Github issues를 통해 패치노트 공지예정
 ------------------------------------------------------
 2022. 02. 22 : ver 1.2.4
   - operation2(판리태양광) 데이터 수집 시작 (keti 서버)
+  - operation2(판리태양광) MASTER_RACK_COMMUNICATION_FAULT(bank), RACK_MODULE_FAULT(rack) json 양식 수정
 
 2022. 02. 21 : ver 1.2.4
   - operation1(시온유태양광) protectionmap 관련 데이터 필터링 코드 추가 
