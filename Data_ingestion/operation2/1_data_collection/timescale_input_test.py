@@ -48,9 +48,17 @@ import pprint
 class timescale:
 
     # 기본 클라이언트 설정
-    def __init__(self):
+    def __init__(self, ip, port, username, password, dbname):
         # timescale DB 연결
-        self.CONNECTION = """DB접속명령어"""
+        self.CONNECTION = (
+            """postgres://{_username}:{_password}@{_ip}:{_port}/{_dbname}""".format(
+                _username=username,
+                _password=password,
+                _ip=ip,
+                _port=port,
+                _dbname=dbname,
+            )
+        )
         with psycopg2.connect(self.CONNECTION) as self.conn:
             self.cursor = self.conn.cursor()
 

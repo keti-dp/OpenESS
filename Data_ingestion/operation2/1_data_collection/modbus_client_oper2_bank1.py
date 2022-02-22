@@ -453,7 +453,13 @@ def main():
     # Bank_data2, Rack_data2 = data_manipulation(list3, list4, bank_id=2)
     # PCS_data, ETC_data = list5, list6
 
-    timescale = timescale_input_test.timescale()
+    timescale = timescale_input_test.timescale(
+        ip="ip주소",
+        port="포트번호",
+        username="username",
+        password="password",
+        dbname="dbname",
+    )
     timescale.Bank_input_data(seoultime, Bank_data, operation_site)
     timescale.Rack_input_data(seoultime, Rack_data, operation_site)
     # timescale.Bank_input_data(seoultime, Bank_data2, operation_site)
