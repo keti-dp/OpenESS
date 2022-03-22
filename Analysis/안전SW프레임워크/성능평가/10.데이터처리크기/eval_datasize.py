@@ -1,5 +1,5 @@
 """
-title: 안전SW프레임워크 1차년도 성능시험평가
+title: 안전 SW 프레임워크 1차년도 성능시험평가
 date: 2021-10-12
 writer: KETI 최우정
 
@@ -10,7 +10,7 @@ writer: KETI 최우정
             - 데이터 크기 확인
         2)데이터 처리
             - 평균 계산
-
+            - 데이터 처리
 """
 
 import sys
@@ -19,14 +19,15 @@ import pandas.io.sql as psql
 from datetime import datetime
 
 if __name__ == "__main__":
+
     time_start = datetime.now()
 
     """데이터베이스 연결"""
-    CONNECTION = "postgres://guest_user:guest1234!@1.214.41.250:5434/ESS_Operating_Site1"
+    # CONNECTION = "postgres://guest_user:####@1.1.1.1:1111/ESS_Operating_Site1"
     conn = psycopg2.connect(CONNECTION)
     cursor = conn.cursor()
 
-    # 데이터베이스 내 테이블리스트 조회
+    """테이블 목록 조회"""
     sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'"
     cursor.execute(sql)
     result = cursor.fetchall()
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     """데이터 조회"""
     time_query_start = datetime.now()
     # ESS 뱅크 데이터
-    sql =  "SELECT * FROM rack limit 1000000"
+    sql =  "SELECT * FROM rack limit 4000000"
     df_rack = psql.read_sql(sql, conn)
     time_query_end = datetime.now()
     print(type(df_rack))
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     time_mean_start = datetime.now()
     # 평균 구하기
     print(df_rack.columns)
-    rack_soh_mean = df_rack['RACK_SOH'].mean()
+    rack_soh_mean = df_rack['RACK_VOLTAGE'].mean()
     print(rack_soh_mean)
     time_mean_end = datetime.now()
     print('평균 계산 시간:', time_mean_end - time_mean_start)
