@@ -378,6 +378,11 @@ def data_manipulation(BMS1, BMS2, bank_id):
         elif BMS2_rack[1 + 51 * i] == 1:
             BMS2_rack[1 + 51 * i] = 0
 
+        if BMS2_rack[5 + 51 * i] == 0:
+            BMS2_rack[5 + 51 * i] = 1
+        elif BMS2_rack[5 + 51 * i] == 1:
+            BMS2_rack[5 + 51 * i] = 0
+
     # print("BANK : ", BANK)
 
     # RACK 데이터 만들기 이중리스트
