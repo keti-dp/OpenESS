@@ -73,8 +73,15 @@ class ESS_Modbus:
 
     # 기본 클라이언트 설정
     def __init__(self):
-        self.client = ModbusClient("ModbusTCP IP주소", "포트번호", unit_id=1)
-        self.client.open()
+
+        try:
+            connection_logger = logs.get_logger(
+                "operation1", log_path, "operation1.json"
+            )
+            self.client = ModbusClient("ModbusTCP IP주소", "포트번호", unit_id=1)
+            self.client.open()
+        except Exception as e:
+            connection_logger.error("Connection Error : ", e)
 
     # 클라이언트 세팅
     def client_set(self, IP, PORT, ID):
@@ -85,9 +92,7 @@ class ESS_Modbus:
 
         try:
             # 파싱로그
-            parsing_logger = logs.get_logger(
-                "operation1", "./Data_Ingestion/log/", "operation1.json"
-            )
+            parsing_logger = logs.get_logger("operation1", log_path, "operation1.json")
 
             # 인풋레지스터의 경우 최대 125개밖에 못가져오기때문에 BMS데이터의 경우 수정이 필요함
             if partID == 1:  # BMS1
@@ -153,24 +158,24 @@ class ESS_Modbus:
     def data_preprocessing(self, partID, data):
 
         preprocessing_logger = logs.get_logger(
-            "operation1", "./Data_Ingestion/log/", "operation1.json"
+            "operation1", log_path, "operation1.json"
         )
 
         try:
             if partID == 1:  # BMS1
-                scale_factor_file_path = "/scalefactor_BMS1.txt"
-                value_range_file_path = "/range_BMS1.txt"
+                scale_factor_file_path = file_path + "scalefactor_BMS1.txt"
+                value_range_file_path = file_path + "range_BMS1.txt"
             elif partID == 2:  # BMS2  -> boolean
-                scale_factor_file_path = "/scalefactor_BMS2.txt"
+                scale_factor_file_path = file_path + "scalefactor_BMS2.txt"
                 # BMS2는 0 1값밖에 없기 때문에 인트형으로 변경
                 for i in range(len(data)):
                     data[i] = int(data[i])
 
             elif partID == 3:  # PCS
-                scale_factor_file_path = "/scalefactor_PCS.txt"
+                scale_factor_file_path = file_path + "scalefactor_PCS.txt"
             elif partID == 4:  # ETC
-                scale_factor_file_path = "/scalefactor_ETC.txt"
-                value_range_file_path = "/range_ETC.txt"
+                scale_factor_file_path = file_path + "scalefactor_ETC.txt"
+                value_range_file_path = file_path + "range_ETC.txt"
 
             # 스케일 팩터파일
             scale_factor_file = open(scale_factor_file_path, "r")
@@ -328,7 +333,13 @@ def main():
     Bank_data, Rack_data = data_manipulation(list1, list2)
     PCS_data, ETC_data = list3, list4
 
-    timescale = timescale_input_data.timescale()
+    timescale = timescale_input_test.timescale(
+        ip="ip",
+        port="port",
+        username="username",
+        password="password",
+        dbname="dbname",
+    )
     timescale.Bank_input_data(seoultime, Bank_data, operation_site)
     timescale.Rack_input_data(seoultime, Rack_data, operation_site)
     timescale.PCS_input_data(seoultime, PCS_data, operation_site)
@@ -352,6 +363,9 @@ def job():
 
 
 if __name__ == "__main__":
+
+    file_path = "./log"
+    log_path = "./log/"
 
     start = int(time.time())
     count = 0

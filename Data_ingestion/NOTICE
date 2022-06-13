@@ -18,12 +18,17 @@
 
 1. 프로젝트 중 아래에 파일에서 명시된 라이브러리에 대해 각각의 라이선스가 적용되어있습니다.
 
+
+data_loss_rate.py - pandas - 3-Clause BSD License       
+
 logs.py - ecs_logging - Apache License 2.0
 
 modbus_client_oper1.py - pymodbusTCP - MIT License
 modbus_client_oper1_kafka.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank1.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank2.py - pymodbusTCP - MIT License
+
+
 
 timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
 
