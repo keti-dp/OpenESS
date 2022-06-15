@@ -82,7 +82,6 @@ Copyright(C) 2022, 윤태일 / KETI / taeil777@keti.re.kr
 전체적인 코드에 대한 설명은 https://github.com/keti-dp/OpenESS 에서 확인하실 수 있습니다.
 """
 
-
 from tracemalloc import start
 import timescale_input_test
 from pytz import timezone
@@ -90,7 +89,8 @@ from datetime import date, datetime, timedelta
 from datetime import datetime
 import logs
 import pandas as pd
-
+import sys
+import pandas.io.sql as psql
 
 # 1. db 객체를 두 개 만듦
 # 2. 1번 db에서 지정된 시간 사이에 count를 가져옴 > 86400개 (1일당 86400개를 기준으로 손실률 계산)
@@ -99,6 +99,26 @@ import pandas as pd
 
 # 1)매일같이 크론으로 실행할 거
 # 2)날짜 입력하면 거기서부터 알아서 할거
+
+
+def convert_bytes(bytes_number):
+    """바이트숫자를 입력하면 단위에 맞게 변환해준다.
+    Args:
+        bytes_number (int): 변환할 바이트 값
+    Returns:
+        str: 변환된 값에 단위를 붙여서 반환
+    """
+    tags = ["Byte", "Kilobyte", "Megabyte", "Gigabyte", "Terabyte"]
+
+    i = 0
+    double_bytes = bytes_number
+
+    while i < len(tags) and bytes_number >= 1024:
+        double_bytes = bytes_number / 1024.0
+        i = i + 1
+        bytes_number = bytes_number / 1024
+
+    return str(round(double_bytes, 2)) + " " + tags[i]
 
 
 def calc_loss_rate(database, operating_site, start_time, end_time, table_name):
@@ -125,7 +145,30 @@ def calc_loss_rate(database, operating_site, start_time, end_time, table_name):
         )
     )
 
+    hypertable_size = database.query_data(
+        """SET TIME ZONE 'Asia/Seoul';
+        SELECT hypertable_size('{table_name}');""".format(
+            table_name=table_name
+        )
+    )[0][0]
+
+    hypertable_size = convert_bytes(hypertable_size)
+
+    table_size_log_message = (
+        """{DB_region} / {oper} / {table} data size : {hypertable_size}""".format(
+            DB_region=DB_region,
+            oper=operating_site,
+            table=table_name,
+            hypertable_size=hypertable_size,
+        )
+    )
+
+    dataloss_logger.info(table_size_log_message)
+
     data_count = query_result[0][0] / bankdivide_var
+
+    if data_count > 86400:
+        data_count = 86400
 
     date_diff = end_time - start_time
 
@@ -135,7 +178,7 @@ def calc_loss_rate(database, operating_site, start_time, end_time, table_name):
         ((total_daily_data_count - data_count) / total_daily_data_count * 100), 2
     )
 
-    log_message = """{start_time} {DB_region} {oper} {table} data loss rate : {loss_rate} %""".format(
+    loss_rate_log_message = """{start_time} / {DB_region} / {oper} / {table} data loss rate : {loss_rate} %""".format(
         start_time=start_time,
         DB_region=DB_region,
         oper=operating_site,
@@ -147,20 +190,19 @@ def calc_loss_rate(database, operating_site, start_time, end_time, table_name):
     # 2퍼센트보다 크면 워닝
     # 나머지 인포
     if loss_rate > 5:
-        dataloss_logger.critical(log_message)
+        dataloss_logger.critical(loss_rate_log_message)
     elif loss_rate > 2:
-        dataloss_logger.warning(log_message)
+        dataloss_logger.warning(loss_rate_log_message)
     else:
-        if loss_rate < 0:
-            loss_rate = 0
-        log_message = """{start_time} {DB_region} {oper} {table} data loss rate : {loss_rate} %""".format(
+
+        loss_rate_log_message = """{start_time} / {DB_region} / {oper} / {table} data loss rate : {loss_rate} %""".format(
             start_time=start_time,
             DB_region=DB_region,
             oper=operating_site,
             table=table_name,
             loss_rate=loss_rate,
         )
-        dataloss_logger.info(log_message)
+        dataloss_logger.info(loss_rate_log_message)
 
     print(start_time, "~", end_time)
     print(date_diff.days, "일간", table_name, "수집률 및 손실률")
@@ -191,18 +233,18 @@ if __name__ == "__main__":
         dataloss_logger = logs.get_logger(logname, log_path, logfile)
 
         timescale_local = timescale_input_test.timescale(
-            ip="로컬서버",
-            port="포트",
-            username="username",
-            password="password",
+            ip="1.214.41.250",
+            port="5434",
+            username="postgres",
+            password="keti1234!",
             dbname=operating_site,
         )
 
         timescale_GCP = timescale_input_test.timescale(
-            ip="GCP서버",
-            port="포트",
-            username="username",
-            password="password",
+            ip="localhost",
+            port="5432",
+            username="postgres",
+            password="keti1234!",
             dbname=operating_site,
         )
 
@@ -245,7 +287,7 @@ if __name__ == "__main__":
                     timescale_local, operating_site, start_time, end_time, table_name
                 )
             except Exception as e:
-                pass
+                print(e)
 
             print("--------------")
             print(operating_site)
@@ -256,7 +298,7 @@ if __name__ == "__main__":
                     timescale_GCP, operating_site, start_time, end_time, table_name
                 )
             except Exception as e:
-                pass
+                print(e)
 
             print("--------------")
         end_time = end_time + timedelta(days=-1)
