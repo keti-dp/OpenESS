@@ -348,7 +348,9 @@ def data_manipulation(BMS1, BMS2, bank_id):
     BMS2_rack = BMS2[info_num:]
 
     # 뱅크 부분 0 1 반전 있음 536번
+    # 541 Battery Status for Run 0, 1 반전
     BMS2_bank[-8] = 1 if BMS2_bank[-8] == 0 else 0
+    BMS2_bank[-3] = 1 if BMS2_bank[-3] == 0 else 0
 
     # bank id 삽입
     BMS1_bank.insert(0, BANK_ID)
