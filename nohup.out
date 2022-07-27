@@ -1,0 +1,39 @@
+[W 09:24:53.236 NotebookApp] WARNING: The notebook server is listening on all IP addresses and not using encryption. This is not recommended.
+[I 09:24:53.239 NotebookApp] Serving notebooks from local directory: /home/keti_iisrc/ESS/OpenESS
+[I 09:24:53.239 NotebookApp] Jupyter Notebook 6.4.5 is running at:
+[I 09:24:53.239 NotebookApp] http://instance-keti-jhkim:5000/
+[I 09:24:53.239 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 09:25:15.124 NotebookApp] 302 GET / (106.252.229.51) 0.700000ms
+[I 09:25:15.132 NotebookApp] 302 GET /tree? (106.252.229.51) 0.700000ms
+[I 09:25:20.142 NotebookApp] 302 POST /login?next=%2Ftree%3F (106.252.229.51) 71.520000ms
+[W 09:25:43.079 NotebookApp] Notebook Analysis/SoX_Estimation/MaximumVoltagePrediction_After10mins_Result.ipynb is not trusted
+ERROR:asyncio:Exception in callback <TaskWakeupMethWrapper object at 0x7f2acbc41d30>(<Future finis...3df"\r\n\r\n'>)
+handle: <Handle <TaskWakeupMethWrapper object at 0x7f2acbc41d30>(<Future finis...3df"\r\n\r\n'>)>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/events.py", line 81, in _run
+    self._context.run(self._callback, *self._args)
+RuntimeError: Cannot enter into task <Task pending name='Task-9' coro=<HTTP1ServerConnection._server_request_loop() running at /usr/local/lib/python3.8/dist-packages/tornado/http1connection.py:823> wait_for=<Future finished result=b'GET /api/co...e3df"\r\n\r\n'> cb=[IOLoop.add_future.<locals>.<lambda>() at /usr/local/lib/python3.8/dist-packages/tornado/ioloop.py:688]> while another task <Task pending name='Task-1' coro=<MultiKernelManager._async_start_kernel() running at /usr/local/lib/python3.8/dist-packages/jupyter_client/multikernelmanager.py:186>> is being executed.
+[I 09:25:43.608 NotebookApp] Kernel started: cbc81116-0586-4c3d-b396-14e2979f982e, name: python3
+[I 09:26:10.153 NotebookApp] 302 GET / (106.252.229.51) 0.570000ms
+[I 09:27:43.821 NotebookApp] Saving file at /Analysis/SoX_Estimation/MaximumVoltagePrediction_After10mins_Result.ipynb
+[W 09:27:43.822 NotebookApp] Notebook Analysis/SoX_Estimation/MaximumVoltagePrediction_After10mins_Result.ipynb is not trusted
+[I 17:10:42.996 NotebookApp] 302 GET / (167.94.145.60) 5.810000ms
+[I 17:10:43.525 NotebookApp] 302 GET / (167.94.145.60) 0.610000ms
+[I 17:10:44.057 NotebookApp] Malformed HTTP message from 167.94.145.60: Malformed HTTP version in HTTP Request-Line: 'HTTP/2.0'
+[I 17:10:44.594 NotebookApp] 302 GET /tree (167.94.145.60) 3.530000ms
+[I 17:10:45.129 NotebookApp] Malformed HTTP message from 167.94.145.60: Malformed HTTP version in HTTP Request-Line: 'HTTP/2.0'
+[I 17:10:46.203 NotebookApp] Malformed HTTP message from 167.94.145.60: Malformed HTTP version in HTTP Request-Line: 'HTTP/2.0'
+[I 18:07:44.840 NotebookApp] 302 GET / (185.173.35.29) 4.810000ms
+[W 19:01:44.244 NotebookApp] WebSocket ping timeout after 119993 ms.
+[I 19:01:49.256 NotebookApp] Starting buffering for cbc81116-0586-4c3d-b396-14e2979f982e:53afefebb410408eb05cef6114b533bc
+[I 19:04:16.254 NotebookApp] Restoring connection for cbc81116-0586-4c3d-b396-14e2979f982e:53afefebb410408eb05cef6114b533bc
+[I 21:04:03.738 NotebookApp] 302 GET / (185.173.35.21) 4.600000ms
+[I 21:04:04.038 NotebookApp] 302 GET /tree (185.173.35.21) 2.910000ms
+[I 02:29:37.984 NotebookApp] Starting buffering for cbc81116-0586-4c3d-b396-14e2979f982e:53afefebb410408eb05cef6114b533bc
+[I 04:23:13.859 NotebookApp] 302 GET / (205.210.31.23) 6.410000ms
+[I 04:23:14.207 NotebookApp] 302 GET /tree (205.210.31.23) 2.960000ms
+[I 05:04:29.002 NotebookApp] 302 GET / (115.94.10.37) 5.000000ms
+[W 05:04:29.089 NotebookApp] Clearing invalid/expired login cookie username-34-64-78-241-5000
+[W 05:04:29.090 NotebookApp] Clearing invalid/expired login cookie username-34-64-78-241-5000
+[I 05:04:29.092 NotebookApp] 302 GET /tree? (115.94.10.37) 7.440000ms
+[I 05:04:34.680 NotebookApp] 302 POST /login?next=%2Ftree%3F (115.94.10.37) 71.730000ms
