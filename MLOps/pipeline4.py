@@ -230,11 +230,11 @@ if __name__ == "__main__":
 
     experiments_name = "sample-%04d%02d%02d_%02d%02d%02d" %(t.tm_year, t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec)
 
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./keti-iisrc-31fd794a57c2.json"
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./keti-iisrc.example.json"
     #client = kfp.Client(host='https://23fbddd5362afcb7-dot-asia-east1.pipelines.googleusercontent.com')
-    token = '-----BEGIN RSA PRIVATE KEY----- MIIEogIBAAKCAQEAstx3k7m5Gf1ZdYhUNlSt+faMMLMz4jGrPgjfwQOJoadVDWvP qcP88adIl2GplQM9fwjgR5OIZYsXc8noQDF28xvdyDfffX5rsM+EqN1OEghjjPzJ kyeiweQTwix3PS5GP51BB4dt5NuFUubuTlL29egYs7FnZ7bKdCthXPLk+aPvADC5 WtfOSKm8BplnHTlbTJzvctnDOCHOHQb7ZAJ8sgwHVCk62hnoNooBYlOaM7l3oX/C Dz1PoNZIS/tqoZigRBBJZRUm0DOjODVo4m41drETYoRvy7ufmPda8pFhp2XAWgCy Gdys++1mJwwhFBIhu8iOhgnQFx3W05UUzs7bdQIDAQABAoIBAHCa9H2As9R0+FlS lxINheqVGfWfHM8PTiwkEhrGS2QGoTlt4rOSvDC3jLAhwE4cWB8eS3VEoN6tDvrK 5vljKuwrYxmmc4HikZIjU/WsPnaD6YjdrVqD3agMG5Rnwjo2Y+uw6TwAO2OWAP4M fYO6H9j5YnPfAKb/Ib65gPavxRCU4exaWKG8Syva3iu6N/M+bo0p3eaQemgmUl6B GvA8xbMMaRuvlqHEvCOGwU0ZejJODuvEItRcMEVPbTVBKTUnO9q1ifqMQYmF2Z8E MYjJ3A9JLBb/Tb0e/GDBgfsBtgfVFgMJ3JMpSPrPJKeb39RQg9gNC741raGW0VGK eXidXpECgYEA7iSw8XkBbyYvzQzLESPoCvfS8KyDFCzKm3XcaArE2fUuJLmRTU/x rCyzvDNw3o8+zy42kUTHANOl1IDxpdDmFQ9qmey7DOt2fm377m3i/eF4fZOHBihT CUYWuQ9AdCxY+P4sCtvqlsl9u+5WbQrBJZSntC3I9GRIUXfcGmUKdt8CgYEAwEXR mbHoW/T/JSmnMxIFlQ4tuHyjdx/8H8k4XZWAT2yREmDcqPVgNm2J5kEcHflBsUyT SB3ukrHkHuK/61f0Ozqxt876gDVAwpQvGdTxCoGB+f+phcE18t9cm3Tzjhg6rldW 4H3EPx8m06agXPK0bj0cnDq1+fTfYWtVow8DnCsCgYAETHdBNJz5A6hzPBriSVKj +As/uu12zMQvgDYlTqR1Br75fLwJuDq1j+0Cpa8Q5WcN2Fi10JcDBc8FgfpasuWk Va3n72UE+68c4yFcEXG6gXpqUeJrEwlErpY0avkP38kPXY8v9v5KEIMLhGbc+we3 hPJuBzGMb876YX6An3hL4wKBgDOVB4xCLGIvMhwYNqD+3ryEV0O9PGWDETK92v9Q UmH8cFcL4Wb6nVs8u9gn85EfA767GnAoh46XZunaTz6mFAGn13HGd3HZ14vcEV7O v/Pflq0pJ6OYmA6WWdPi5kxit6t6BvanBvUgOFxjwXXuLvW8M2a+YX+zcBJEp27d YkyNAoGAXd+oTf1r7ELUv2DkRwGBaCtB2ClxsPaSRTkRfDmI3hUfNkpzZT5mmA0O 6AeCZmaV20iM5Zu+tC2WdxlDiGhXSwsGSnnTC7SvY0LlKGW80Jtx3bnpU8m1L1JT 0+J9QqpVkOncC1wfoC4M4YOkpE9PswWlv7Ei+EnaA8HGVXFJDLI= -----END RSA PRIVATE KEY-----'
+    # token =
     # http:32553, https:32003
-    client = kfp.Client(host='https://1.214.41.250.keti:31613', namespace='keti', client_id="kjoohyu@gmail.com")
+    client = kfp.Client(host='host-ip')
     #my_experiment = client.create_experiment(name='Basic Experiment')
     #print(client.set_user_namespace(False))
     my_run = client.create_run_from_pipeline_func(sample_pipeline, arguments={})
