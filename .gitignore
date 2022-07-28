@@ -129,7 +129,9 @@ dmypy.json
 .pyre/
 
 # My Data Files - Privacy or Bigdata
-/home/keti_iisrc/ESS/OpenESS/Analysis/Predictions/forecasting_data/
-/home/keti_iisrc/ESS/OpenESS/Analysis/SoX_Estimation/2st/
-/home/keti_iisrc/ESS/OpenESS/Analysis/SoX_Estimation/2st_fig/
-
+Analysis/Predictions/forecasting_data/
+Analysis/SoX_Estimation/2st/
+Analysis/SoX_Estimation/2st_fig/
+*.csv
+*.xlsx
+*.feather
