@@ -94,7 +94,7 @@ def sample_pipeline():
                       }
     )
 
-    # 여기부터 동적으로 파이프라인 설정함함
+    # 여기부터 동적으로 파이프라인 설정함
    ridArr = []
     clf_pipes = []
     clf_output = []
