@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# My Data Files - Privacy or Bigdata
+Analysis/Predictions/forecasting_data/
+Analysis/SoX_Estimation/2st/
+Analysis/SoX_Estimation/2st_fig/
+*.csv
+*.xlsx
+*.feather
