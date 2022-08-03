@@ -22,11 +22,16 @@
 data_loss_rate.py - pandas - 3-Clause BSD License       
 
 logs.py - ecs_logging - Apache License 2.0
+kafka_oper1.py - kafka-python - Apache License 2.0
+kafka_oper2_bank1.py - kafka-python - Apache License 2.0
+kafka_oper2_bank2.py - kafka-python - Apache License 2.0
+modbus_client_oper1_kafka+protectionmap.py - kafka-python - Apache License 2.0
 
 modbus_client_oper1.py - pymodbusTCP - MIT License
 modbus_client_oper1_kafka.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank1.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank2.py - pymodbusTCP - MIT License
+modbus_client_oper1_kafka+protectionmap.py - pymodbusTCP - MIT License
 
 
 
