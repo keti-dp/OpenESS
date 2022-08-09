@@ -1,0 +1,85 @@
+
+# Scaler method's args
+"minmax_scaler_args" : {
+    "feature_range" : !!python/tuple [0,1], 
+    "copy" : True #, "clip" : False}
+}
+"standard_scaler_args" : {
+    "copy" : True, 
+    "with_mean" : False, 
+    "with_std" : True
+}
+"norm_scaler_args" : {
+    "norm" : "l2", 
+    "copy" : True
+}
+
+# Regression method's args
+"linear_args" : { 
+    "fit_intercept" : True 
+}
+"catBoost_args" : { 
+    "iterations" : 1000, 
+    "learning_rate" : 0.1, 
+    "depth" : 4, 
+    "verbose" : False 
+}
+"xgboost_args" : {
+    "eta" : 0.1, 
+    "max_depth" : 4 #, "tree_method" : 'gpu_hist', 'gpu_id' : 0 }
+}
+"lightGBM_args" : {
+    "num_leaves" : 15, 
+    "learning_rate" : 0.01 
+}
+
+# Classification method's args
+"svm_args" : {
+    "degree" : 5, 
+    "kernel" : 'linear'
+}
+"randomforest_args" : {
+    "n_estimators" : 150
+}
+
+
+
+##############################################
+
+# (example) pipeline selection
+# load_data + split_train + anomaly_detection + reg(xgboost) + result
+"user_pipeline_func" : "sample_pipeline_1"
+"target_pl" : {
+    "persist_volume" : "keti-shared-volume",
+    "label_column" : "RACK_SOC", #"RACK_SOC"
+    "load_data_args" : {
+         "start_date": "20211001", 
+         "end_date": "20211002",
+         "ess_type": 1, 
+         "Bank": False, 
+         "Rack": True,
+         "Bank_num": 1, 
+         "Rack_num": 1,
+         "Bank_columns": "False", 
+         "Rack_columns": "False"
+    },
+    "split_train_test_args" : {
+         "size" : 0.7, 
+         "shuffle": True, 
+         "random_state": 11
+    },
+    "anomaly_detection_args" : {
+         "merge_test_data" : 1, 
+         "outlier_column" : "RACK_MAX_CELL_VOLTAGE",  
+         "thresh_hold" : [0.25, 0.75], 
+         "iqr_range": 0
+    },
+    "scaler_method" : "minmax", # minmax, stardard, norm
+    "scaler_args" : "minmax_scaler_args",
+
+    "reg_method" : "xgboost", # linear, catboost, xgboost, lightGBM
+    "reg_args" : "xgboost_args",
+
+    "cls_method" : "lightGBM", # svm, randomforest, catboost, xgboost, lightGBM
+    "cls_args" : "lightGBM_args",
+}
