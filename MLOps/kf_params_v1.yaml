@@ -2,7 +2,8 @@
 # Scaler method's args
 "minmax_scaler_args" : {
     "feature_range" : !!python/tuple [0,1], 
-    "copy" : True #, "clip" : False}
+    "copy" : True 
+    #"clip" : False
 }
 "standard_scaler_args" : {
     "copy" : True, 
@@ -26,7 +27,9 @@
 }
 "xgboost_args" : {
     "eta" : 0.1, 
-    "max_depth" : 4 #, "tree_method" : 'gpu_hist', 'gpu_id' : 0 }
+    "max_depth" : 4,
+#     "tree_method" : 'gpu_hist', 
+#     'gpu_id' : 0
 }
 "lightGBM_args" : {
     "num_leaves" : 15, 
@@ -48,31 +51,42 @@
 
 # (example) pipeline selection
 # load_data + split_train + anomaly_detection + reg(xgboost) + result
-"user_pipeline_func" : "sample_pipeline_1"
+"user_pipeline_func" : "sample_pipeline_2"
 "target_pl" : {
+    # Create persistent volume
     "persist_volume" : "keti-shared-volume",
-    "label_column" : "RACK_SOC", #"RACK_SOC"
+    # Existing persistent volume
+    "pvc_args" : {
+        "pvc_name" : "keti-shared-volume",
+        "volume_name" : "data",
+        "volume_mount_path" : "/data",
+    },
+    
+    #"label_column" : 'RACK_SOC'  # For Sample_pipeline_1
+    "label_column" : 'RACK_MAX_CELL_VOLTAGE_POSITION', #"RACK_SOC"
+    
     "load_data_args" : {
-         "start_date": "20211001", 
-         "end_date": "20211002",
-         "ess_type": 1, 
-         "Bank": False, 
-         "Rack": True,
-         "Bank_num": 1, 
-         "Rack_num": 1,
-         "Bank_columns": "False", 
-         "Rack_columns": "False"
+        "selected_data" : "/data/data.csv",
+        "start_date": "20211001", 
+        "end_date": "20211002",
+        "ess_type": 1, 
+        "Bank": False, 
+        "Rack": True,
+        "Bank_num": 1, 
+        "Rack_num": 1,
+        "Bank_columns": "False", 
+        "Rack_columns": "False"
     },
     "split_train_test_args" : {
-         "size" : 0.7, 
-         "shuffle": True, 
-         "random_state": 11
+        "size" : 0.7, 
+        "shuffle": True, 
+        "random_state": 11
     },
     "anomaly_detection_args" : {
-         "merge_test_data" : 1, 
-         "outlier_column" : "RACK_MAX_CELL_VOLTAGE",  
-         "thresh_hold" : [0.25, 0.75], 
-         "iqr_range": 0
+        "merge_test_data" : 1, 
+        "outlier_column" : "RACK_MAX_CELL_VOLTAGE",  
+        "thresh_hold" : [0.25, 0.75], 
+        "iqr_range": 0
     },
     "scaler_method" : "minmax", # minmax, stardard, norm
     "scaler_args" : "minmax_scaler_args",
