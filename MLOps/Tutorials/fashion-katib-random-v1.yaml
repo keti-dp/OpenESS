@@ -1,0 +1,82 @@
+apiVersion: 'kubeflow.org/v1beta1'
+kind: Experiment
+metadata:
+  name: fashion-mnist-experiment-3-v1
+  namespace: 'space-openess'
+spec:
+  maxTrialCount: 50
+  parallelTrialCount: 2
+  maxFailedTrialCount: 3
+#   resumePolicy: LongRunning
+  objective:
+    type: maximize
+    goal: 0.99
+    objectiveMetricName: Validation-accuracy
+    additionalMetricNames:
+      - accuracy
+      - loss
+      - Validation-loss
+  algorithm:
+    algorithmName: random
+    algorithmSettings: []
+  parameters:
+    - name: '--learning_rate'
+      parameterType: double
+      feasibleSpace:
+        min: '0.01'
+        max: '0.03'
+#         step: '0.001'
+    - name: '--dropout_rate'
+      parameterType: double
+      feasibleSpace:
+        min: '0.1'
+        max: '0.9'
+    - name: '--opt'
+      parameterType: int
+      feasibleSpace:
+        min: '0'
+        max: '1'
+  metricsCollectorSpec:
+    source:
+      filter:
+        metricsFormat:
+        - "([\\w|-]+)\\s*=\\s*((-?\\d+)(\\.\\d+)?)"
+      fileSystemPath:
+        path: /var/log/katib/metrics.log
+        kind: File
+    collector:
+      kind: File
+  trialTemplate:
+    primaryContainerName: random-training-container
+    successCondition: status.conditions.#(type=="Complete")#|#(status=="True")#
+    failureCondition: status.conditions.#(type=="Failed")#|#(status=="True")#
+    retain: false
+    trialParameters:
+      - name: learning_rate
+        reference: '--learning_rate'
+        description: 'learning rate for fashion mnist'
+      - name: dropout_rate
+        reference: '--dropout_rate'
+        description: 'dropout rate for fashion mnist'
+      - name: opt
+        reference: '--opt'
+        description: 'optimizer for fashion mnist'
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/inject: 'false'
+          spec:
+            containers:
+              - name: random-training-container
+                image: 192.168.0.180:5000/fairing-job-v1:27552C7
+                command:
+                  - python
+                  - /app/fashion-mnist-katib-v1.py
+                  - '--learning_rate=${trialParameters.learning_rate}'
+                  - '--dropout_rate=${trialParameters.dropout_rate}'
+                  - '--opt=${trialParameters.opt}'
+            restartPolicy: Never
