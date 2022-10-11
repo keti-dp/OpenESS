@@ -59,14 +59,14 @@
     "pvc_args" : {
         "pvc_name" : "keti-shared-volume",
         "volume_name" : "keti-shared-volume", #"data",
-        "volume_mount_path" : "/data", #TODO : Need to modify
+        "volume_mount_path" : "/mnt", #TODO : Need to modify
     },
     
     #"label_column" : 'RACK_SOC'  # For Sample_pipeline_1
     "label_column" : 'RACK_MAX_CELL_VOLTAGE_POSITION', #"RACK_SOC"
     
     "load_data_args" : {
-        "selected_data" : "/data/data.csv",
+        "selected_data" : "/mnt/data.csv",
         "start_date": "20211001", 
         "end_date": "20211002",
         "ess_type": 1, 
