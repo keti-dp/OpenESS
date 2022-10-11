@@ -59,7 +59,7 @@
     "pvc_args" : {
         "pvc_name" : "keti-shared-volume",
         "volume_name" : "keti-shared-volume", #"data",
-        "volume_mount_path" : "/mnt", #"/data",
+        "volume_mount_path" : "/mnt/data",
     },
     
     #"label_column" : 'RACK_SOC'  # For Sample_pipeline_1
