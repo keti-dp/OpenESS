@@ -58,7 +58,7 @@
     # Existing persistent volume
     "pvc_args" : {
         "pvc_name" : "keti-shared-volume",
-        "volume_name" : "data",
+        "volume_name" : "keti-shared-volume",#"data",
         "volume_mount_path" : "/data",
     },
     
