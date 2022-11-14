@@ -51,7 +51,7 @@
 
 # (example) pipeline selection
 # load_data + split_train + anomaly_detection + reg(xgboost) + result
-"user_pipeline_func" : "sample_pipeline_1"
+"user_pipeline_func" : "sample_pipeline_2"
 "target_pl" : {
     # Create persistent volume
     "persist_volume" : "keti-shared-volume",
@@ -66,7 +66,7 @@
     "label_column" : 'RACK_MAX_CELL_VOLTAGE_POSITION', #"RACK_SOC"
     
     "load_data_args" : {
-        "selected_data_name" : "selected_data.csv",
+        "selected_file_name" : "selected_data.csv",
         "start_date": "20211001", 
         "end_date": "20211002",
         "ess_type": "1", 
@@ -78,6 +78,7 @@
         "Rack_columns": "False"
     },
     "split_train_test_args" : {
+        "load_file_name" : "selected_data.csv",
         "size" : 0.7, 
         "shuffle": True, 
         "random_state": 11
