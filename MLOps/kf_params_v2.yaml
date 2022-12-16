@@ -66,10 +66,10 @@
     "label_column" : 'RACK_MAX_CELL_VOLTAGE_POSITION', #"RACK_SOC"
     
     "load_data_args" : {
-        "selected_data" : "/mnt/data.csv",
+        "selected_file_name" : "selected_data.csv",
         "start_date": "20211001", 
         "end_date": "20211002",
-        "ess_type": 1, 
+        "ess_type": "1", 
         "Bank": False, 
         "Rack": True,
         "Bank_num": 1, 
@@ -78,6 +78,7 @@
         "Rack_columns": "False"
     },
     "split_train_test_args" : {
+        "load_file_name" : "selected_data.csv",
         "size" : 0.7, 
         "shuffle": True, 
         "random_state": 11

@@ -54,11 +54,11 @@
 "user_pipeline_func" : "sample_pipeline_2"
 "target_pl" : {
     # Create persistent volume
-    "persist_volume" : "keti-shared-volume",
+    "persist_volume" : "snu-shared-volume", #"keti-shared-volume",
     # Existing persistent volume
     "pvc_args" : {
-        "pvc_name" : "keti-shared-volume",
-        "volume_name" : "keti-shared-volume", #"data",
+        "pvc_name" : "snu-shared-volume", #"keti-shared-volume",
+        "volume_name" : "snu-shared-volume", #"keti-shared-volume", #"data",
         "volume_mount_path" : "/mnt", #TODO : Need to modify
     },
     

@@ -1,6 +1,0 @@
-dbname: 'ESS_Operating_Site1'
-user: 'guest_user'
-password: '##########'
-run: ['1_DataLoad_DB.py', '2_Preprocessing_AnomalyDetection.py', '2_Preprocessing_AnomalyDeletion.py', '3_Save_DB.py', '4_Analysis_Statistics.py', '5_Result.py']
-# run: ['1_DataLoad_Storage.py', '2_Preprocessing_AnomalyDetection.py', '2_Preprocessing_AnomalyDeletion.py', '3_Save_Storage.py', '4_Analysis_ML.py', '5_Result.py']
-
