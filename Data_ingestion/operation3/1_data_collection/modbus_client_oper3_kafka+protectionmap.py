@@ -1,7 +1,7 @@
 #!/bin/python
 
 """
-modbus_client_oper2_kafka+protectionmap.py : 태양광 ESS 데이터 수집을 위한 코드 (카프카 consumer 및 특이치 저장)
+modbus_client_oper3_kafka+protectionmap.py : 태양광 ESS 데이터 수집을 위한 코드 (카프카 consumer 및 특이치 저장)
 
         ---------------------------------------------------------------------------
         Copyright(C) 2022, 윤태일 / KETI / taeil777@keti.re.kr
@@ -45,7 +45,7 @@ modbus_client_oper2_kafka+protectionmap.py : 태양광 ESS 데이터 수집을 �
 최신 테스트 버전 : 1.0.0 ver
 최신 안정화 버전 : 1.0.0 ver
 
-시온유 태양광 ESS데이터 수집을 위한 코드입니다.
+황금 6호 태양광 ESS데이터 수집을 위한 코드입니다.
 
 kafak 프로듀서 클러스터에서 consumer를 통해 데이터를 수집하고 timescaledb 를 통해 데이터를 입력합니다.
 
@@ -55,8 +55,6 @@ protection 맵에 따라서 특이치에 대한 저장은 별도로 이루어집
        
 
 """
-
-
 from pyModbusTCP.client import ModbusClient
 
 import time
@@ -65,7 +63,7 @@ import datetime
 
 from multiprocessing import Process
 import threading
-from pytz import timezone
+import pytz
 import numpy as np
 import logs
 import os
@@ -73,13 +71,12 @@ import threading
 
 from kafka import KafkaConsumer
 from json import loads
-import json
 
 
 if __name__ == "__main__":
 
-    operation_site = "operation2"
-    topic_name = "panly"
+    operation_site = "operation3"
+    topic_name = "hwang-geum"
     consumer = KafkaConsumer(
         topic_name,
         bootstrap_servers=[
@@ -97,7 +94,7 @@ if __name__ == "__main__":
     )
 
     log_path = "민감정보"
-    main_logger = logs.get_logger("operation2", log_path, "operation2.json")
+    main_logger = logs.get_logger("operation3", log_path, "operation3.json")
 
     while True:
         try:
@@ -112,45 +109,41 @@ if __name__ == "__main__":
 
                     # seoultime = datetime.now(timezone("Asia/Seoul")).replace(microsecond=0)
 
+                    KST = pytz.timezone("Asia/Seoul")
+                    seoultime = seoultime.astimezone(KST)
                     print(seoultime)
 
-                    timescale = timescale_input_test.timescale(
-                        ip="IP",
-                        # ip="localhost",
-                        port="port",
-                        username="username",
-                        password="password",
-                        dbname="dbname",
-                    )
-
-                    # 3보다 크면 bank2 + PCS + ETC
-                    if len(message.value) > 3:
-                        Bank_data = message.value["Bank_data"][0]
-                        Rack_data = message.value["Rack_data"][0]
-                        PCS_data = message.value["PCS_data"]
-                        ETC_data = message.value["ETC_data"]
-
-                        timescale.Bank_input_data(seoultime, Bank_data, operation_site)
-                        timescale.Rack_input_data(seoultime, Rack_data, operation_site)
-                        timescale.PCS_input_data(seoultime, PCS_data, operation_site)
-                        timescale.ETC_input_data(seoultime, ETC_data, operation_site)
-                    else:
-                        Bank_data = message.value["Bank_data"][0]
-                        Rack_data = message.value["Rack_data"][0]
-
-                        timescale.Bank_input_data(seoultime, Bank_data, operation_site)
-                        timescale.Rack_input_data(seoultime, Rack_data, operation_site)
+                    Bank_data = message.value["Bank_data"]
+                    Rack_data = message.value["Rack_data"]
+                    PCS_data = message.value["PCS_data"]
+                    ETC_data = message.value["ETC_data"]
 
                     timescale_feature = timescale_input_test.timescale(
-                        ip="IP",
-                        # ip="localhost",
-                        port="port",
-                        username="username",
-                        password="password",
-                        dbname="dbname",
+                        # ip="34.64.61.225",
+                        ip="localhost",
+                        port="5432",
+                        username="postgres",
+                        password="keti1234!",
+                        dbname="ESS_FEATURE",
                     )
 
-                    # 뱅크1은 랙이 9개, 뱅크2는 랙이 8개
+                    timescale = timescale_input_test.timescale(
+                        # ip="34.64.61.225",
+                        ip="localhost",
+                        port="5432",
+                        username="postgres",
+                        password="keti1234!",
+                        dbname="ESS_Operating_Site3",
+                    )
+
+                    timescale.Bank_input_data(seoultime, Bank_data, operation_site)
+                    timescale.Rack_input_data(seoultime, Rack_data, operation_site)
+                    timescale.PCS_input_data(seoultime, PCS_data, operation_site)
+                    timescale.ETC_input_data(seoultime, ETC_data, operation_site)
+
+                    # continue
+
+                    # bank 45 : MASTER_RACK_COMMUNICATION_FAULT
 
                     # bank : MASTER_RACK_COMMUNICATION_FAULT
                     if Bank_data[36] == 1:
@@ -161,22 +154,17 @@ if __name__ == "__main__":
                             error_level=2,
                             bank_id=1,
                             rack_id=0,
-                            operating_site=1,
+                            operating_site=3,
                             description=message,
                         )
 
-                    # 뱅크id에 따른 랙 개수
-                    rack_count = 0
-                    if Bank_data[0] == 1:
-                        rack_count = 9
-                    elif Bank_data[0] == 2:
-                        rack_count = 8
+                    rack_count = 11
 
                     for i in range(rack_count):
 
-                        if Rack_data[i][34] == 1:
+                        if Rack_data[i][35] == 1:
                             message = """랙 온도 불균형 경고, cell 온도편차 : {value}""".format(
-                                value=Rack_data[i][16]
+                                value=Rack_data[i][17]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -184,12 +172,12 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][35] == 1:
+                        if Rack_data[i][36] == 1:
                             message = """랙 저온 경고, 최소 cell 온도 : {value1}, 최소 cell 온도 위치 : {value2} """.format(
-                                value1=Rack_data[i][14], value2=Rack_data[i][15]
+                                value1=Rack_data[i][13], value2=Rack_data[i][14]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -197,13 +185,13 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
 
-                        if Rack_data[i][36] == 1:
+                        if Rack_data[i][37] == 1:
                             message = """랙 고온 경고, 최대 cell 온도 : {value1}, 최대 cell 온도 위치 : {value2} """.format(
-                                value1=Rack_data[i][12], value2=Rack_data[i][13]
+                                value1=Rack_data[i][11], value2=Rack_data[i][12]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -211,25 +199,25 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
-                                description=message,
-                            )
-                        if Rack_data[i][37] == 1:
-                            message = """랙 전압 불균형 경고, cell 전압편차 : {value}""".format(
-                                value=Rack_data[i][10]
-                            )
-                            timescale_feature.outlier_detection(
-                                seoultime=seoultime,
-                                error_code=4,
-                                error_level=1,
-                                bank_id=1,
-                                rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
                         if Rack_data[i][38] == 1:
+                            message = """랙 전압 불균형 경고, cell 전압편차 : {value}""".format(
+                                value=Rack_data[i][11]
+                            )
+                            timescale_feature.outlier_detection(
+                                seoultime=seoultime,
+                                error_code=4,
+                                error_level=1,
+                                bank_id=1,
+                                rack_id=i + 1,
+                                operating_site=3,
+                                description=message,
+                            )
+                        if Rack_data[i][39] == 1:
                             message = """랙 저전압 경고, 최소 cell 전압 : {value1}, 최소 cell 전압 위치 : {value2}""".format(
-                                value1=Rack_data[i][8], value2=Rack_data[i][9]
+                                value1=Rack_data[i][9], value2=Rack_data[i][10]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -237,13 +225,13 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
 
-                        if Rack_data[i][39] == 1:
+                        if Rack_data[i][40] == 1:
                             message = """랙 과전압 경고, 최대 cell 전압 : {value1}, 최대 cell 전압 위치 : {value2}""".format(
-                                value1=Rack_data[i][6], value2=Rack_data[i][7]
+                                value1=Rack_data[i][7], value2=Rack_data[i][8]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -251,12 +239,12 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][40] == 1:
+                        if Rack_data[i][41] == 1:
                             message = """랙 충전 과전류 경고, 랙 전류 : {value}""".format(
-                                value1=Rack_data[i][5]
+                                value1=Rack_data[i][6]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -264,12 +252,12 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][41] == 1:
+                        if Rack_data[i][42] == 1:
                             message = """랙 방전 과전류 경고, 랙 전류 : {value}""".format(
-                                value1=Rack_data[i][5]
+                                value1=Rack_data[i][6]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -277,12 +265,12 @@ if __name__ == "__main__":
                                 error_level=1,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][43] == 1:
+                        if Rack_data[i][44] == 1:
                             message = """랙 온도 불균형 장애, cell 온도편차 : {value}""".format(
-                                value=Rack_data[i][16]
+                                value=Rack_data[i][17]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -290,12 +278,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][44] == 1:
+                        if Rack_data[i][45] == 1:
                             message = """랙 저온 장애, 최소 cell 온도 : {value1}, 최소 cell 온도 위치 : {value2} """.format(
-                                value1=Rack_data[i][14], value2=Rack_data[i][15]
+                                value1=Rack_data[i][15], value2=Rack_data[i][16]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -303,12 +291,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][45] == 1:
+                        if Rack_data[i][46] == 1:
                             message = """랙 고온 장애, 최대 cell 온도 : {value1}, 최대 cell 온도 위치 : {value2} """.format(
-                                value1=Rack_data[i][12], value2=Rack_data[i][13]
+                                value1=Rack_data[i][13], value2=Rack_data[i][14]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -316,12 +304,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][46] == 1:
+                        if Rack_data[i][47] == 1:
                             message = """랙 전압 불균형 장애, cell 전압편차 : {value}""".format(
-                                value=Rack_data[i][10]
+                                value=Rack_data[i][11]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -329,12 +317,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][47] == 1:
+                        if Rack_data[i][48] == 1:
                             message = """랙 저전압 장애, 최소 cell 전압 : {value1}, 최소 cell 전압 위치 : {value2}""".format(
-                                value1=Rack_data[i][8], value2=Rack_data[i][9]
+                                value1=Rack_data[i][9], value2=Rack_data[i][10]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -342,13 +330,13 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
 
-                        if Rack_data[i][48] == 1:
+                        if Rack_data[i][49] == 1:
                             message = """랙 과전압 장애, 최대 cell 전압 : {value1}, 최대 cell 전압 위치 : {value2}""".format(
-                                value1=Rack_data[i][6], value2=Rack_data[i][7]
+                                value1=Rack_data[i][7], value2=Rack_data[i][8]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -356,12 +344,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][49] == 1:
+                        if Rack_data[i][50] == 1:
                             message = """랙 충전 과전류 장애, 랙 전류 : {value}""".format(
-                                value1=Rack_data[i][5]
+                                value1=Rack_data[i][6]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -369,12 +357,12 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][50] == 1:
+                        if Rack_data[i][51] == 1:
                             message = """랙 방전 과전류 장애, 랙 전류 : {value}""".format(
-                                value1=Rack_data[i][5]
+                                value1=Rack_data[i][6]
                             )
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -382,10 +370,10 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][51] == 1:
+                        if Rack_data[i][52] == 1:
                             message = """랙 충전 컨텍터 고장 """.format()
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -393,10 +381,10 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][52] == 1:
+                        if Rack_data[i][53] == 1:
                             message = """랙 방전 컨텍터 고장 """.format()
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -404,11 +392,11 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
 
-                        if Rack_data[i][53] == 1:
+                        if Rack_data[i][54] == 1:
                             message = """랙 (-) 퓨즈 장애 """.format()
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -416,11 +404,11 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
 
-                        if Rack_data[i][54] == 1:
+                        if Rack_data[i][55] == 1:
                             message = """랙 (+) 퓨즈 장애 """.format()
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -428,10 +416,10 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-                        if Rack_data[i][55] == 1:
+                        if Rack_data[i][56] == 1:
                             message = """트레이 - 랙 통신 이상 """.format()
                             timescale_feature.outlier_detection(
                                 seoultime=seoultime,
@@ -439,12 +427,9 @@ if __name__ == "__main__":
                                 error_level=2,
                                 bank_id=1,
                                 rack_id=i + 1,
-                                operating_site=1,
+                                operating_site=3,
                                 description=message,
                             )
-
-                    # RACK_MODULE_FAULT = json.loads(Rack_data[i][56])
-                    # 모듈 고장 패스
 
                     print("[end] get consumer list")
 

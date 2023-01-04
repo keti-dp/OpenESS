@@ -556,9 +556,7 @@ class timescale:
 
     def query_data(self, query_text):
 
-        SQL = """select count(*) from rack where "RACK_ID" = 1;""".format(
-            _tablename=table_name
-        )
+        SQL = """select count(*) from rack where "RACK_ID" = 1;""".format(_tablename=table_name)
 
         cursor = self.conn.cursor()
         query = query_text

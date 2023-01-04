@@ -21,7 +21,7 @@ kafka_oper2_bank2.py : 태양광 ESS 데이터 수집을 위한 코드 (카프�
 최신 테스트 버전 : 1.0.0 ver
 최신 안정화 버전 : 1.0.0 ver
 
-시온유 태양광 ESS데이터 수집을 위한 코드입니다.
+판리 태양광 ESS데이터 수집을 위한 코드입니다.
 
 구축된 kafka cluster에서 producer를 생성하여 modbus TCP통신을 통해 ESS 운영사이트에서 데이터를 저장합니다.
 
@@ -50,9 +50,7 @@ class ESS_Modbus:
     # 기본 클라이언트 설정
     def __init__(self):
         try:
-            connection_logger = logs.get_logger(
-                "operation2", log_path, "operation2.json"
-            )
+            connection_logger = logs.get_logger("operation2", log_path, "operation2.json")
             self.client = ModbusClient("모드버스주소", 40001, unit_id=1)
             self.client.open()
         except Exception as e:
@@ -195,9 +193,7 @@ class ESS_Modbus:
             ['0','0','1','1',...]
         """
 
-        preprocessing_logger = logs.get_logger(
-            "operation2", log_path, "operation2.json"
-        )
+        preprocessing_logger = logs.get_logger("operation2", log_path, "operation2.json")
 
         try:
             if partID == 11:  # BMS1 - bank1
@@ -389,17 +385,13 @@ def data_manipulation(BMS1, BMS2, bank_id):
         rack_module_fault_dict = {}  # rack json
 
         for module_number in range(1, 21):
-            rack_module_fault_dict["module" + str(module_number)] = temp2[
-                -20 + module_number - 1
-            ]
+            rack_module_fault_dict["module" + str(module_number)] = temp2[-20 + module_number - 1]
 
         # json 대체
         temp2[-20] = json.dumps(rack_module_fault_dict)
         temp2_2 = temp2[0:-19]
 
-        bank_commuication_fault_dict["rack" + str(rack_number)] = BMS2_bank[
-            22 + rack_number - 1
-        ]
+        bank_commuication_fault_dict["rack" + str(rack_number)] = BMS2_bank[22 + rack_number - 1]
 
         temp3 = temp1 + temp2_2
         temp3.insert(0, rack_number)  # BANK, RACK ID 추가

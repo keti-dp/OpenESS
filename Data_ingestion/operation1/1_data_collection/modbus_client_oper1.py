@@ -75,9 +75,7 @@ class ESS_Modbus:
     def __init__(self):
 
         try:
-            connection_logger = logs.get_logger(
-                "operation1", log_path, "operation1.json"
-            )
+            connection_logger = logs.get_logger("operation1", log_path, "operation1.json")
             self.client = ModbusClient("ModbusTCP IP주소", "포트번호", unit_id=1)
             self.client.open()
         except Exception as e:
@@ -157,9 +155,7 @@ class ESS_Modbus:
     # 데이터 전처리 (스케일팩터, 범위 확인)
     def data_preprocessing(self, partID, data):
 
-        preprocessing_logger = logs.get_logger(
-            "operation1", log_path, "operation1.json"
-        )
+        preprocessing_logger = logs.get_logger("operation1", log_path, "operation1.json")
 
         try:
             if partID == 1:  # BMS1

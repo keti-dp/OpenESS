@@ -94,8 +94,8 @@ if __name__ == "__main__":
         value_deserializer=lambda x: loads(x.decode("utf-8")),
         consumer_timeout_ms=1000,
     )
-    # log_path = "/home/keti_iisrc/test/log/"
-    log_path = "/home/keti/test/log/"
+
+    log_path = "민감정보"
     main_logger = logs.get_logger("operation1", log_path, "operation1.json")
 
     while True:
@@ -105,9 +105,9 @@ if __name__ == "__main__":
 
                 for message in consumer:
 
-                    seoultime = datetime.datetime.fromtimestamp(
-                        message.timestamp / 1000
-                    ).replace(microsecond=0)
+                    seoultime = datetime.datetime.fromtimestamp(message.timestamp / 1000).replace(
+                        microsecond=0
+                    )
 
                     # seoultime = datetime.now(timezone("Asia/Seoul")).replace(microsecond=0)
 

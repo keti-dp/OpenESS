@@ -11,7 +11,7 @@
 참고 및 출처 : https://semver.org/lang/ko/
 
 
-현재 버전 ver 1.2.6 / 2022년 03월 25일 16시 10분 기준
+현재 버전 ver 2.4.7 / 2023년 01월 04일 14시 20분 기준
 
 
 
@@ -25,6 +25,7 @@ logs.py - ecs_logging - Apache License 2.0
 kafka_oper1.py - kafka-python - Apache License 2.0
 kafka_oper2_bank1.py - kafka-python - Apache License 2.0
 kafka_oper2_bank2.py - kafka-python - Apache License 2.0
+kafka_oper3.py - kafka-python - Apache License 2.0
 modbus_client_oper1_kafka+protectionmap.py - kafka-python - Apache License 2.0
 
 modbus_client_oper1.py - pymodbusTCP - MIT License
@@ -32,6 +33,7 @@ modbus_client_oper1_kafka.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank1.py - pymodbusTCP - MIT License
 modbus_client_oper2_bank2.py - pymodbusTCP - MIT License
 modbus_client_oper1_kafka+protectionmap.py - pymodbusTCP - MIT License
+modbus_client_oper3_kafka+protectionmap.py - pymodbusTCP - MIT License
 
 
 

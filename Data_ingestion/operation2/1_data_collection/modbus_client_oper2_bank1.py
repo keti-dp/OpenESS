@@ -103,9 +103,7 @@ class ESS_Modbus:
 
         try:
             # 파싱로그
-            parsing_logger = logs.get_logger(
-                "operation2", "/home/keti_iisrc/test/log/", "operation2.json"
-            )
+            parsing_logger = logs.get_logger("operation2", "민감정보", "operation2.json")
 
             # 인풋레지스터의 경우 최대 125개밖에 못가져오기때문에 BMS데이터의 경우 수정이 필요함
             if partID == 11:  # BMS1 - bank1
@@ -214,26 +212,22 @@ class ESS_Modbus:
             ['0','0','1','1',...]
         """
 
-        preprocessing_logger = logs.get_logger(
-            "operation2", "/home/keti_iisrc/test/log/", "operation2.json"
-        )
+        preprocessing_logger = logs.get_logger("operation2", "민감정보", "operation2.json")
 
         try:
             if partID == 11:  # BMS1 - bank1
-                scale_factor_file_path = "/home/keti_iisrc/operation2/preprocessing_filter/scalefactor_BMS1_bank1.txt"
-                scale_factor_file_path = "C:/Users/taeil/Documents/GitHub\ESS/Data_Ingestion/Operation2/preprocessing_filter/scalefactor_BMS1_bank1.txt"
-                # value_range_file_path = "C:/Users/taeil/Documents/GitHub/ESS/Data_Ingestion/preprocessing_filter/range_BMS1.txt"
+
+                scale_factor_file_path = "민감정보"
+
             elif partID == 12:  # BMS1 - bank2
-                scale_factor_file_path = "/home/keti_iisrc/operation2/preprocessing_filter/scalefactor_BMS1_bank2.txt"
-                scale_factor_file_path = "C:/Users/taeil/Documents/GitHub\ESS/Data_Ingestion/Operation2/preprocessing_filter/scalefactor_BMS1_bank2.txt"
-                # value_range_file_path = "C:/Users/taeil/Documents/GitHub/ESS/Data_Ingestion/preprocessing_filter/range_BMS1.txt"
+
+                scale_factor_file_path = "민감정보"
 
             # BMS2는 0 1값밖에 없기 때문에 필요없음
             elif partID == 3:  # PCS
-                scale_factor_file_path = "/home/keti_iisrc/operation2/preprocessing_filter/scalefactor_PCS.txt"
+                scale_factor_file_path = "민감정보"
             elif partID == 4:  # ETC
-                scale_factor_file_path = "/home/keti_iisrc/operation2/preprocessing_filter/scalefactor_ETC.txt"
-                # value_range_file_path = "D:/vscode/ESS/range_ETC.txt"
+                scale_factor_file_path = "민감정보"
 
             if partID != 21 and partID != 22:
                 # 스케일 팩터파일
@@ -247,29 +241,6 @@ class ESS_Modbus:
                 elif 32767 < data[i] < 65536:
                     data[i] = -(65535 - data[i] + 1)
 
-            # part2의 값 범위와 scale_factor 적용
-            # if partID == 21 or 22:
-            # for i in range(len(data)):
-            #     if self.in_range(data[i], 0, 3):
-            #         pass
-            #     else:
-            #         print("partID : ", partID)
-            #         print("번호 : ", i)
-            #         print("범위를 벗어난 값 입니다.", data[i])
-            #         preprocessing_logger.warning(
-            #             "An out-of-range value occurs at address %s of part %s : %s",
-            #             i,
-            #             partID,
-            #             data[i],
-            #         )
-            # scale_factor_file.close()
-            # return data
-            # elif partID == 3:
-            #     pass
-            # else:
-            #     value_range_file = open(value_range_file_path, "r")
-            #     value_range = value_range_file.readlines()
-
             # 스케일 팩터 적용 BMS2 는 적용시킬필요가없음
             if partID != 21 and partID != 22:
                 for i in range(len(data)):
@@ -277,30 +248,6 @@ class ESS_Modbus:
                     data[i] = int(data[i]) * float(scale_factor[i])  # 스케일팩터 적용
                     data[i] = float("{:.3f}".format(data[i]))  # 소수점 한자리 적용
 
-            # 값 범위(레인지) 판별
-            # PCS의 경우 값 범위가 없기때문에 그냥 리턴
-            # if partID == 3:
-            #     scale_factor_file.close()
-            #     # preprocessing_logger.info("part %s data preprocessing success", partID)
-            #     return data
-
-            # for i in range(len(data)):
-            #     value_range[i] = value_range[i].strip("\n")  # 레인지 줄바꿈 문자 제거
-            #     min_value = float(value_range[i].split()[0])
-            #     max_value = float(value_range[i].split()[2])
-
-            #     if self.in_range(data[i], min_value, max_value):
-            #         pass
-            #     else:
-            #         print("partID : ", partID)
-            #         print("번호 : ", i)
-            #         print("범위를 벗어난 값 입니다.", data[i])
-            #         preprocessing_logger.warning(
-            #             "An out-of-range value occurs at address %s of part %s : %s",
-            #             i,
-            #             partID,
-            #             data[i],
-            #         )
             if partID != 21 and partID != 22:
                 # 스케일 팩터파일
                 scale_factor_file.close()
@@ -397,17 +344,13 @@ def data_manipulation(BMS1, BMS2, bank_id):
         rack_module_fault_dict = {}  # rack json
 
         for module_number in range(1, 21):
-            rack_module_fault_dict["module" + str(module_number)] = temp2[
-                -20 + module_number - 1
-            ]
+            rack_module_fault_dict["module" + str(module_number)] = temp2[-20 + module_number - 1]
 
         # json 대체
         temp2[-20] = json.dumps(rack_module_fault_dict)
         temp2_2 = temp2[0:-19]
 
-        bank_commuication_fault_dict["rack" + str(rack_number)] = BMS2_bank[
-            22 + rack_number - 1
-        ]
+        bank_commuication_fault_dict["rack" + str(rack_number)] = BMS2_bank[22 + rack_number - 1]
 
         temp3 = temp1 + temp2_2
         temp3.insert(0, rack_number)  # BANK, RACK ID 추가
