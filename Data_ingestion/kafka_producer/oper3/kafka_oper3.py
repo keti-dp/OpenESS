@@ -401,6 +401,23 @@ if __name__ == "__main__":
     file_path = "파일경로"
     log_path = "로그경로"
 
+    start = int(time.time())
+
+    while True:
+        try:
+            main_logger = logs.get_logger("operation3", log_path, "operation3.json")
+            while True:
+                end = int(time.time())
+                if start == end - 1:
+                    job()
+                time.sleep(0.5)
+                start = end
+        except Exception as e:
+            log_massage = """all sections error : {error}""".format(error=e)
+            main_logger.error(log_massage)
+            time.sleep(2)
+            continue
+
     """시간 간격 설정"""
     schedule.every(1).seconds.do(job)
 
