@@ -36,6 +36,7 @@ modbus_client_oper1_kafka+protectionmap.py - pymodbusTCP - MIT License
 modbus_client_oper3_kafka+protectionmap.py - pymodbusTCP - MIT License
 
 
+indexing_module.py - psycopg2 - GNU General Public License (GPLv2)
 
 timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
 
