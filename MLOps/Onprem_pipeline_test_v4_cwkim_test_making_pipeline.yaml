@@ -1,0 +1,146 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: sample-pipeline-2-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13, pipelines.kubeflow.org/pipeline_compilation_time: '2023-05-04T05:31:11.139016',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "sample pipeline case 2
+      (Classification model)", "name": "Sample Pipeline 2"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13}
+spec:
+  entrypoint: sample-pipeline-2
+  templates:
+  - name: data-selection
+    container:
+      args:
+      - --selected_file_name
+      - selected_data.csv
+      - --type
+      - '1'
+      - --start_date
+      - '20211001'
+      - --end_date
+      - '20211002'
+      - --Bank
+      - "False"
+      - --Rack
+      - "True"
+      - --Bank_num
+      - '1'
+      - --Rack_num
+      - '1'
+      - --Bank_columns
+      - "False"
+      - --Rack_columns
+      - "False"
+      - --save_data_path
+      - /mnt
+      command: [python, load_data.py]
+      image: ketidp/openess:keti.select_dataset-0.2
+      volumeMounts:
+      - {mountPath: /mnt, name: keti-shared-volume}
+    metadata:
+      annotations: {pipelines.kubeflow.org/task_display_name: '[1] Load ESS battery
+          data', pipelines.kubeflow.org/max_cache_staleness: P0D}
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.13
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: keti-shared-volume
+      persistentVolumeClaim: {claimName: keti-shared-volume}
+  - name: ml-model-classification
+    container:
+      args: [--X_train, /mnt/X_train.csv, --Y_train, /mnt/Y_train.csv, --X_test, /mnt/X_test.csv,
+        --Y_test, /mnt/Y_test.csv, --classification_method, lightGBM, --classification_args,
+        '{''num_leaves'': 15, ''learning_rate'': 0.01}', --save_data_path, /mnt]
+      command: [python, ml_classification.py]
+      image: ketidp/openess:keti.ai_classification_models-0.2
+      volumeMounts:
+      - {mountPath: /mnt, name: keti-shared-volume}
+    metadata:
+      annotations: {pipelines.kubeflow.org/task_display_name: '[4] MachineLearning
+          : Classification method', pipelines.kubeflow.org/max_cache_staleness: P0D}
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.13
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: keti-shared-volume
+      persistentVolumeClaim: {claimName: keti-shared-volume}
+  - name: preprocessing-anomaly
+    container:
+      args: [--split_X_train, /mnt/X_train.csv, --split_Y_train, /mnt/Y_train.csv,
+        --split_X_test, /mnt/X_test.csv, --split_Y_test, /mnt/Y_test.csv, --anomaly_args,
+        '{''merge_test_data'': 1, ''outlier_column'': ''RACK_MAX_CELL_VOLTAGE'', ''thresh_hold'':
+          [0.25, 0.75], ''iqr_range'': 0}', --save_data_path, /mnt]
+      command: [python, preprocessing_anomaly_detection.py]
+      image: ketidp/openess:keti.preproc_anomaly_detection-0.1
+      volumeMounts:
+      - {mountPath: /mnt, name: keti-shared-volume}
+    metadata:
+      annotations: {pipelines.kubeflow.org/task_display_name: '[3-1] Preprocessing
+          : Anomaly detection', pipelines.kubeflow.org/max_cache_staleness: P0D}
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.13
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: keti-shared-volume
+      persistentVolumeClaim: {claimName: keti-shared-volume}
+  - name: preprocessing-scaler
+    container:
+      args: [--split_X_train, /mnt/X_train.csv, --split_X_test, /mnt/X_test.csv, --prep_method,
+        minmax, --prep_args, '{''feature_range'': (0, 1), ''copy'': True}', --save_data_path,
+        /mnt]
+      command: [python, preprocessing_scaler.py]
+      image: ketidp/openess:keti.preproc_scaler_models-0.1
+      volumeMounts:
+      - {mountPath: /mnt, name: keti-shared-volume}
+    metadata:
+      annotations: {pipelines.kubeflow.org/task_display_name: '[3-2] Preprocessing
+          : Scale Up & Down', pipelines.kubeflow.org/max_cache_staleness: P0D}
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.13
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: keti-shared-volume
+      persistentVolumeClaim: {claimName: keti-shared-volume}
+  - name: sample-pipeline-2
+    dag:
+      tasks:
+      - {name: data-selection, template: data-selection}
+      - name: ml-model-classification
+        template: ml-model-classification
+        dependencies: [preprocessing-scaler]
+      - name: preprocessing-anomaly
+        template: preprocessing-anomaly
+        dependencies: [split-train-test-data]
+      - name: preprocessing-scaler
+        template: preprocessing-scaler
+        dependencies: [preprocessing-anomaly]
+      - name: split-train-test-data
+        template: split-train-test-data
+        dependencies: [data-selection]
+  - name: split-train-test-data
+    container:
+      args: [--load_file_name, selected_data.csv, --load_data_path, /mnt, --save_data_path,
+        /mnt, --split_method, '{''load_file_name'': ''selected_data.csv'', ''size'':
+          0.7, ''shuffle'': True, ''random_state'': 11}', --label_column, RACK_MAX_CELL_VOLTAGE_POSITION]
+      command: [python, split_data.py]
+      image: ketidp/openess:keti.split_train_and_test_from_dataset-0.2
+      volumeMounts:
+      - {mountPath: /mnt, name: keti-shared-volume}
+    metadata:
+      annotations: {pipelines.kubeflow.org/task_display_name: '[2] Split raw data
+          to train them', pipelines.kubeflow.org/max_cache_staleness: P0D}
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.13
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: keti-shared-volume
+      persistentVolumeClaim: {claimName: keti-shared-volume}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner
