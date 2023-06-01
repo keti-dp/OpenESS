@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: sample-pipeline-2-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13, pipelines.kubeflow.org/pipeline_compilation_time: '2023-06-01T04:18:29.586620',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13, pipelines.kubeflow.org/pipeline_compilation_time: '2023-06-01T08:42:47.229728',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "sample pipeline case 2
       (Classification model)", "name": "Sample Pipeline 2"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13}
