@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: sample-pipeline-2-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13, pipelines.kubeflow.org/pipeline_compilation_time: '2023-06-01T08:42:47.229728',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13, pipelines.kubeflow.org/pipeline_compilation_time: '2023-06-07T04:54:08.057934',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "sample pipeline case 2
       (Classification model)", "name": "Sample Pipeline 2"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.13}
@@ -36,6 +36,7 @@ spec:
       - /mnt
       command: [python, load_data.py]
       image: ghcr.io/keti-dp/openess-public:keti.select_dataset-0.2
+      imagePullPolicy: Always
       volumeMounts:
       - {mountPath: /mnt, name: keti-shared-volume}
     metadata:
@@ -55,6 +56,7 @@ spec:
         '{''num_leaves'': 15, ''learning_rate'': 0.01}', --save_data_path, /mnt]
       command: [python, ml_classification.py]
       image: ghcr.io/keti-dp/openess-public:keti.ai_classification_models-0.3
+      imagePullPolicy: Always
       volumeMounts:
       - {mountPath: /mnt, name: keti-shared-volume}
     metadata:
@@ -75,6 +77,7 @@ spec:
           [0.25, 0.75], ''iqr_range'': 0}', --save_data_path, /mnt]
       command: [python, preprocessing_anomaly_detection.py]
       image: ghcr.io/keti-dp/openess-public:keti.preproc_anomaly_detection-0.1
+      imagePullPolicy: Always
       volumeMounts:
       - {mountPath: /mnt, name: keti-shared-volume}
     metadata:
@@ -94,6 +97,7 @@ spec:
         /mnt]
       command: [python, preprocessing_scaler.py]
       image: ghcr.io/keti-dp/openess-public:keti.preproc_scaler_models-0.1
+      imagePullPolicy: Always
       volumeMounts:
       - {mountPath: /mnt, name: keti-shared-volume}
     metadata:
@@ -129,6 +133,7 @@ spec:
           0.7, ''shuffle'': True, ''random_state'': 11}', --label_column, RACK_MAX_CELL_VOLTAGE_POSITION]
       command: [python, split_data.py]
       image: ghcr.io/keti-dp/openess-public:keti.split_train_and_test_from_dataset-0.2
+      imagePullPolicy: Always
       volumeMounts:
       - {mountPath: /mnt, name: keti-shared-volume}
     metadata:
