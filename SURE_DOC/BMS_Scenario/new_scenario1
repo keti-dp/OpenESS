@@ -133,24 +133,17 @@ void Monitor_TASK(void const * argument)//monitor
 
         //measureTaskCPUUsage();
         usage = osGetCPUUsage();
-		heapvalue_current = xPortGetFreeHeapSize();
-		heapvalue_max = xPortGetMinimumEverFreeHeapSize();
-		MCU_Temperature();
+	heapvalue_current = xPortGetFreeHeapSize();
+	heapvalue_max = xPortGetMinimumEverFreeHeapSize();
+	MCU_Temperature();
 
-//		test
-//		printf("\ncpu usage : %d\n",usage);
-//		printf("stack usage : %d\n",stack_value);
-//		printf("heap current usage : %d\n",heapvalue_current);
-//		printf("heap value usage : %d\n",heapvalue_max);
-//		printf("func number : %d\n",func_number);
+	TxDataTrans();
+	monitor_end_tick = xTaskGetTickCount();
+	monitor_ticktime = monitor_end_tick - monitor_start_tick;
+	osDelay(100);
 
-		TxDataTrans();
-		monitor_end_tick = xTaskGetTickCount();
-		monitor_ticktime = monitor_end_tick - monitor_start_tick;
-		osDelay(100);
-
-		//usage = osGetCPUUsage();
-		//cpu_usagetest = (((float)monitor_ticktime + (float)Normal_ticktime + (float)Switching_ticktime + (float)GPIO_ticktime) / 3000.0 * 4 ) * 100;
+	//usage = osGetCPUUsage();
+	//cpu_usagetest = (((float)monitor_ticktime + (float)Normal_ticktime + (float)Switching_ticktime + (float)GPIO_ticktime) / 3000.0 * 4 ) * 100;
 
     }
 }
@@ -262,8 +255,6 @@ static void Switching_TASK(void const * argument)
 
 void Multifunction_TASK(void const * argument)
 {
-	//random_parameter = (HAL_RNG_GetRandomNumber(&hrng)%10);
-
     while(1)
     {
     	GPIO_start_tick = xTaskGetTickCount();
