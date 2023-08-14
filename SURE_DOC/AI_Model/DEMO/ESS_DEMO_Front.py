@@ -220,8 +220,11 @@ def update_graph(message,graph_dd, usage_data):
 
     fig.update_layout(layout)
     anomaly_data =  usage_data.loc[usage_data.DeepAnt != False]
-    client_data = {}
+    if message['reset']:
+        usage_data = pd.DataFrame(columns = 'timestamp,CPU,Stack usage,Heap current,Heap max,Temperature,Time stamp,classification,DeepAnt,USAD'.split(','))
     
+    
+    client_data = {}
     client_data['figure'] = fig
     client_data['anomaly'] = anomaly_data.to_dict('records')
     
