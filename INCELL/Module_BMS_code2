@@ -1,0 +1,178 @@
+void _uBAL_test(void) //jyc
+{
+    int i; 
+
+    char duty_a, duty_b,k; 
+
+    duty_a = 0; duty_b = 0;
+    
+    for (i=1; i<=VOLT_COUNT; i++)
+    { 
+        k=0;
+      
+        if(_uBOARD_ID == _uSET_P01)
+        {
+            if (i < 9)
+	    {
+                k = 1 << (i - 1);
+	        duty_a |= k;
+	     }
+
+	     else
+	     {
+  	        k = 1 << (i - 9);
+	        duty_b |= k;
+	     }				
+          }      
+      }
+    
+    if(_uSET_P01==0){  _uBALCMD_A=0x00; _uBALCMD_B=0x00;  }
+
+    else  {  _uBALCMD_A=duty_a; _uBALCMD_B=duty_b;  }
+  
+    _uLTC6811_BALANCING_WDCFG(_uBALCMD_A,_uBALCMD_B);
+}
+
+      //지능형 SW과제           
+      case 'q' :{       
+                  if(s2=='o') {   _uLTC6811_BALANCING_WDCFG(0xff,0x0f);  break;}
+                  if(s2=='a') {   _uLTC6811_BALANCING_WDCFG(0x01,0x00);  break;}
+                  if(s2=='b') {   _uLTC6811_BALANCING_WDCFG(0x02,0x00);  break;}
+                  if(s2=='c') {   _uLTC6811_BALANCING_WDCFG(0x04,0x00);  break;}
+                  if(s2=='d') {   _uLTC6811_BALANCING_WDCFG(0x08,0x00);  break;}
+                  if(s2=='e') {   _uLTC6811_BALANCING_WDCFG(0x10,0x00);  break;}
+                  if(s2=='f') {   _uLTC6811_BALANCING_WDCFG(0x20,0x00);  break;}
+                  if(s2=='g') {   _uLTC6811_BALANCING_WDCFG(0x40,0x00);  break;}
+                  if(s2=='h') {   _uLTC6811_BALANCING_WDCFG(0x80,0x00);  break;}
+                  if(s2=='i') {   _uLTC6811_BALANCING_WDCFG(0x00,0x01);  break;}
+                  if(s2=='j') {   _uLTC6811_BALANCING_WDCFG(0x00,0x02);  break;}
+                  if(s2=='k') {   _uLTC6811_BALANCING_WDCFG(0x00,0x04);  break;}
+                  if(s2=='l') {   _uLTC6811_BALANCING_WDCFG(0x00,0x08);  break;}
+                  if(s2=='m') {   _uLTC6811_DEF_WRCFG();     break;}	
+                  break; 
+                 }     //uint8_t =0;                
+
+
+
+uint16_t _uBAL_RUNF=0,_uFAN_RUNF=0;
+float _uRACK_MINCV=0;
+uint8_t _uSIMUL_F=0;
+
+void _uMODULE_FDATA_SEND(void)
+{
+    unsigned int re_rid,ui,k; 
+    unsigned int crc_c;    
+    //unsigned int in_cnt;
+    unsigned char buf[5];
+    
+	re_rid=0;   
+	crc_c=0; 
+        
+	//	    0             1          2          3            4         5          6  	   7
+	//  --------------------------------------------------------------------------------------------
+	//  |    address  |  code    |   st.h   |  st.l     |   cnt.h   |  cnt.l |    crc.l  |  crc.h  |
+	//  --------------------------------------------------------------------------------------------
+	//  |    0x01     |  0x04    |   0x00   |   0x00    |   0x00    |  0x7C  |    0xF1   |  0xEB   |
+	//  --------------------------------------------------------------------------------------------
+	 //   Rec:(08:31:09)01 04 00 00 00 7C F1 EB    
+         // 0  123456789012345678901  2
+/*          bs01,00,00,3.333,0715 <CR>
+  stx
+  bs
+  01     아이디
+  04     6 : 셀밸런싱(_uBAL_RUNF) ON / OFF ,       7 : 가스검출 로직(_uVOC_RUNF) ON/OFF    
+  03     9 : 팬 동작 상태(_uFAN_RUNF)  ON / OFF , 10 :  예약
+  1234
+  cr
+ */        
+        if(_uRX4_BUF[5]  != ',' ){  printf("1\r\n"); return;}
+        
+        
+        if(_uRX4_BUF[22] != 0x0D){  printf("2\r\n"); return;}
+        
+        ui=k=0;  for (k=3; k<=17;k++)ui += _uRX4_BUF[k]; //수신데이터 체크섬 계산값 
+                
+	buf[0] = _uRX4_BUF[18];    buf[1] = _uRX4_BUF[19];   buf[2] = _uRX4_BUF[20];  buf[3] = _uRX4_BUF[21];   buf[4] = 0x00;  // 입력 받은 CRC
+               
+        
+	if(!(ui == atoi(buf))){    printf("ui=%d\r\n",ui);   return; }
+        
+        _uRACK_MINCV=(_uRX4_BUF[12]-48) + (_uRX4_BUF[14]-48)*0.1 + (_uRX4_BUF[15]-48)*0.01 +(_uRX4_BUF[16]-48)*0.001;
+          
+        //printf("_uRACK_MINCV=%.3f\r\n",_uRACK_MINCV);  
+        
+        _uBAL_RUNF=(_uRX4_BUF[6]-48);
+        _uVOC_ORDER=(_uRX4_BUF[7]-48);
+        _uFAN_OFF=(_uRX4_BUF[9]-48);
+        _uRS_COMSEC=0;
+        
+	re_rid=(_uRX4_BUF[3]-48)*10 + (_uRX4_BUF[4]-48);	// 입력받은 BM300 ID  _uMODEBUS_FDT[6]
+            
+        if( _uBOARD_ID != re_rid )  return;   
+        
+	_uMODEBUS_FDT[0]=0xFE;  //stx
+        _uMODEBUS_FDT[1]=0x73;  //s
+        _uMODEBUS_FDT[2]=0x61;  //a       
+	_uMODEBUS_FDT[3]=_uBOARD_ID&0xFF;  //b             
+ 	 
+	crc_c=CRC16(_uMODEBUS_FDT,74); 
+	  
+	_uMODEBUS_FDT[74]= crc_c & 0xff; //crc_low
+	_uMODEBUS_FDT[75]= crc_c >> 8;   //crc_high 
+        _uMODEBUS_FDT[76]= 0x0d;         //crc_high 
+	  
+	_uTX4_ON; HAL_Delay(3);  _uMODBUS_SEND_SIO4(_uMODEBUS_FDT,77);  HAL_Delay(3); _uTX4_OFF;  //HMI 2
+          
+ 
+}
+
+
+
+void _uMODULE_PSET(void)
+{
+    unsigned int re_code,ui,k;    
+    unsigned char buf[5];
+    
+	re_code=0;   
+
+	
+  
+	
+	//	    0             1          2          3            4         5          6  	   7
+	//  --------------------------------------------------------------------------------------------
+	//  |    address  |  code    |   st.h   |  st.l     |   cnt.h   |  cnt.l |    crc.l  |  crc.h  |
+	//  --------------------------------------------------------------------------------------------
+	//  |    0x01     |  0x04    |   0x00   |   0x00    |   0x00    |  0x7C  |    0xF1   |  0xEB   |
+	//  --------------------------------------------------------------------------------------------
+	 //   Rec:(08:31:09)01 04 00 00 00 7C F1 EB    
+         // 0  123456789012345 6
+//         stx pa99,40,45,0451 cr
+      //   printf("insert\r\n");
+
+        
+        if(_uRX4_BUF[5]  != ',' ){  printf("1\r\n"); return; }
+        
+        if(_uRX4_BUF[16] != 0x0D){  printf("2\r\n"); return; }
+        
+        ui=k=0;  for (k=3; k<=11;k++)ui += _uRX4_BUF[k]; //수신데이터 체크섬 계산값 
+          
+	buf[0] = _uRX4_BUF[12];    buf[1] = _uRX4_BUF[13];    buf[2] = _uRX4_BUF[14];  buf[3] = _uRX4_BUF[15];   buf[4] = 0x00;  	// 입력 받은 CRC
+        
+	if (!(ui == atoi(buf))){    printf("ui=%d\r\n",ui);   return; }
+          
+	re_code=(_uRX4_BUF[3]-48)*10 + (_uRX4_BUF[4]-48);	// 입력받은 P01 
+        
+      //  printf("1\r\n");
+        
+        if(re_code!=99)return;
+        
+        _uSET_P01=(_uRX4_BUF[6]-48)*10 + (_uRX4_BUF[7]-48);	// 입력받은 P01 
+        
+        _uSET_P05=(_uRX4_BUF[9]-48)*10 + (_uRX4_BUF[10]-48);	// 입력받은 P05 
+        
+       // printf("_uSET_P01=%d _uSET_P05=%d \r\n",_uSET_P01,_uSET_P05);
+        
+        save_flash();
+    
+
+}
