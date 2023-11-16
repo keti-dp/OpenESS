@@ -1,0 +1,307 @@
+//지능형sw과제
+extern float _uSIO_uOVPF_VALUE=4.25;
+extern float _uSIO_uOVPW_VALUE=4.25;
+extern float _uSIO_uOVPR_VALUE=4.25;
+extern float _uSIO_uOCPF_VALUE=425;
+extern float _uSIO_uOCPW_VALUE=425;
+extern float _uSIO_uUVPF_VALUE=2.75;
+extern float _uSIO_uUVPW_VALUE=2.75;
+extern float _uSIO_uUVPR_VALUE=2.75;
+extern float _uSIO_uIMCVPF_VALUE=4.25;
+extern float _uSIO_uIMCVPW_VALUE=4.25;
+extern float _uSIO_uIMCVPR_VALUE=4.25;
+extern float _uSIO_uOTPF_VALUE=425;
+extern float _uSIO_uOTPW_VALUE=425;
+extern float _uSIO_uOTPR_VALUE=425;
+extern float _uSIO_uUTPF_VALUE=-425;
+extern float _uSIO_uUTPW_VALUE=-425;
+extern float _uSIO_uUTPR_VALUE=-425;
+extern float _uSIO_uIMTPF_VALUE=4.25;
+extern float _uSIO_uIMTPW_VALUE=4.25;
+extern float _uSIO_uIMTPR_VALUE=4.25;
+
+extern float _uOVPF_VALUE=4.25;
+extern float _uOVPW_VALUE=4.20;
+extern float _uOVPR_VALUE=4.10;
+extern float _uOCPF_VALUE=150.0;
+extern float _uOCPW_VALUE=140.0;
+extern float _uUVPF_VALUE=2.70;
+extern float _uUVPW_VALUE=2.80;
+extern float _uUVPR_VALUE=3.00;
+extern float _uIMCVPF_VALUE=0.50;
+extern float _uIMCVPW_VALUE=0.30;
+extern float _uIMCVPR_VALUE=0.15;
+extern float _uOTPF_VALUE=65.0;
+extern float _uOTPW_VALUE=60.0;
+extern float _uOTPR_VALUE=55.0;
+extern float _uUTPF_VALUE=-20.0;
+extern float _uUTPW_VALUE=-10.0;
+extern float _uUTPR_VALUE=10.0;
+extern float _uIMTPF_VALUE=35.0;
+extern float _uIMTPW_VALUE=30.0;
+extern float _uIMTPR_VALUE=25.0;
+
+void _uSET_MODULE(void)
+{
+   unsigned int ui=0,k=0; 
+   unsigned char buf[20];
+   
+   /*  
+   0  123456789012345 6
+  stx pa99,04,03,1234 cr 
+ 
+_uBAL_RUNF,_uFAN_OFFF;
+    
+*/   
+  
+  
+  ////stx bs01,04,03,1234 cr   //_uVOC_RUNF 
+   _uRX4_INST=0; _uRX4_PNT=0; _uSIO4_FLAG=0;
+   
+   //sprintf((char*)buf,"\2pa99,%02d,%02d,",_uR_PO1_REF,_uR_PO5_REF); ui=0;  for(k=3; k<=11; k++) ui+=buf[k];
+   //HAL_Delay(3);_uTX4_ON; HAL_Delay(3); sprintf((char*)buf,"\2pa99,%02d,%02d,%04d\r",_uR_PO1_REF,_uR_PO5_REF,ui);  mgsio4(buf);  HAL_Delay(1); _uTX4_OFF;
+   
+   //지능형 SW과제
+  sprintf((char*)buf,"\2pa99,%02d,%02d,",_uBALTEST_MN,_uBALTEST_CN); ui=0;  for(k=3; k<=11; k++) ui+=buf[k];
+  HAL_Delay(3);_uTX4_ON; HAL_Delay(3); sprintf((char*)buf,"\2pa99,%02d,%02d,%04d\r",_uBALTEST_MN,_uBALTEST_CN,ui);  mgsio4(buf);  HAL_Delay(1); _uTX4_OFF;
+  
+}
+
+uint8_t _uRESET_F=0,_uRESET_ID=0;
+
+void MODEBUS_WDT_TRANS(void)
+{      
+    unsigned int write_id,write_dt;
+    float fa_dt;
+   
+    write_id=0;  write_id=(int)((_uMODEBUS_WDT[0]*256)+_uMODEBUS_WDT[1]);
+    
+    write_dt=0;  write_dt=(int)((_uMODEBUS_WDT[2]*256)+_uMODEBUS_WDT[3]);
+    
+    if(write_id==0 ) {   }  //EMS Heartbeat
+    if(write_id==1 ) {   }  //Surge_reset
+    if(write_id==2 ) { _uREEMER=write_dt;  }  //Emergency Source
+    //if(write_id==2 ) { _uREEMER=_uR_ENERGENCYF=write_dt;  }  //Emergency Source    
+    if(write_id==3 ) { _uR_ORDERF=write_dt;      }  //Order Source (0: Local Mode  1: Remote)
+    if(write_id==4 ) { _uR_RUNF=write_dt;        }  //Mode Source(0: Run Mode, 1: Init. Mode)
+    
+    if(write_id==5 ) { _uR_PO1_REF=write_dt;  _uRACK_MODBUS_FDT[158]= (0xff00 & _uR_PO1_REF)>>0x8; _uRACK_MODBUS_FDT[159]=( 0xff & _uR_PO1_REF); }  //P01 ref set
+    if(write_id==6 ) { _uR_PO5_REF=write_dt;  _uRACK_MODBUS_FDT[160]= (0xff00 & _uR_PO5_REF)>>0x8; _uRACK_MODBUS_FDT[161]=( 0xff & _uR_PO5_REF); }  //P05 ref set
+    if(write_id==7 ) { _uR_P_REFF=write_dt;      }  //P01,P05 Souce    	 
+    
+    /*지능형 SW과제 JYC 231005*/
+    if(write_id==8 )  { _uSIO_TESTF=write_dt;   }
+    if(write_id==9 )  { _uSIO_uOVPF_VALUE=write_dt*0.01;    }
+    if(write_id==10 ) { _uSIO_uOVPW_VALUE=write_dt*0.01;    }
+    if(write_id==11 ) { _uSIO_uOVPR_VALUE=write_dt*0.01;    }
+    if(write_id==12 ) { _uSIO_uOCPF_VALUE=write_dt*0.01;    }
+    if(write_id==13 ) { _uSIO_uOCPW_VALUE=write_dt*0.01;    }
+    if(write_id==14 ) { _uSIO_uUVPF_VALUE=write_dt*0.01;    }
+    if(write_id==15 ) { _uSIO_uUVPW_VALUE=write_dt*0.01;    }
+    if(write_id==16 ) { _uSIO_uUVPR_VALUE=write_dt*0.01;    }
+    if(write_id==17 ) { _uSIO_uIMCVPF_VALUE=write_dt*0.01;  }
+    if(write_id==18 ) { _uSIO_uIMCVPW_VALUE=write_dt*0.01;  }
+    if(write_id==19 ) { _uSIO_uIMCVPR_VALUE=write_dt*0.01;  }
+    if(write_id==20 ) { _uSIO_uOTPF_VALUE=write_dt*0.01;    }
+    if(write_id==21 ) { _uSIO_uOTPW_VALUE=write_dt*0.01;    }
+    if(write_id==22 ) { _uSIO_uOTPR_VALUE=write_dt*0.01;    }
+    if(write_id==23 ) { _uSIO_uUTPF_VALUE=write_dt*0.01;    }
+    if(write_id==24 ) { _uSIO_uUTPW_VALUE=write_dt*0.01;    }
+    if(write_id==25 ) { _uSIO_uUTPR_VALUE=write_dt*0.01;    }
+    if(write_id==26 ) { _uSIO_uIMTPF_VALUE=write_dt*0.01;   }
+    if(write_id==27 ) { _uSIO_uIMTPW_VALUE=write_dt*0.01;   }
+    if(write_id==28 ) { _uSIO_uIMTPR_VALUE=write_dt*0.01;   }
+    if(write_id==29 ) { _uBALTEST_MN=write_dt;  }   
+    if(write_id==30 ) { _uBALTEST_CN=write_dt;  }
+    
+    if(write_id==99){ _uRESET_F=1; _uRESET_ID=write_dt;  if(_uRESET_ID==_uBM300_ID){NVIC_SystemReset(); }   } //_uEMS_MODBUS_DT
+    
+    
+    
+    _uEMS_SEC=0;
+  
+} 
+
+void SIO1_INST(void)// BM300 to HMI
+{
+  uint8_t s1,s2;//,s3;   
+   
+  if (_uRX1_INST==1)	// 리턴문자까지 완성 입력됨 	
+  {
+    s1=_uRX1_BUF[0]; s2=_uRX1_BUF[1];
+    
+    if(s1==_uBM300_ID && s2==0x04) {  _uMODBUS_FUN0x04_SEND();  }	//
+    if(s1==_uBM300_ID && s2==0x06) {  _uMODBUS_FUN0x06_SEND();  }	//
+      _uRX1_INST=0; _uRX1_PNT=0; _save1 = uwTick; uwTick=0;	 
+  }  
+}
+
+  case 's' :{  ////max_cvolt  min_cvolt  max_temp  min_temp   
+                         if(s2=='o') { if(s3=='1'){ _uSIO_TESTF=1;  printf("TEST_ON\r\n");  } else {  _uSIO_TESTF=0; printf("TEST_OFF\r\n");  }  break;}                          
+                         //if(s2=='a') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_MAXCV=atof(buf); printf("_uSIO_MAXCV=%.3f\r\n",_uSIO_MAXCV);  break;}  
+                         //if(s2=='b') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_MINCV=atof(buf); printf("_uSIO_MINCV=%.3f\r\n",_uSIO_MINCV);  break;} 
+                         //if(s2=='c') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_MAXCT=atof(buf); printf("_uSIO_MAXCT=%.3f\r\n",_uSIO_MAXCT);  break;} 
+                         //if(s2=='d') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_MINCT=atof(buf); printf("_uSIO_MINCT=%.3f\r\n",_uSIO_MINCT);  break;}
+                         //if(s2=='m') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_CURR=atof(buf);  printf("_uSIO_CURR=%.3f\r\n",_uSIO_CURR);  break;} 
+                         //if(s2=='n') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_RACKV=atof(buf); printf("_uSIO_RACKV=%.3f\r\n",_uSIO_RACKV);  break;}
+                         
+                         //지능형SW과제
+                         if(s2=='a') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOVPF_VALUE=atof(buf); printf("_uSIO_uOVPF_VALUE=%.3f\r\n",_uSIO_uOVPF_VALUE);  break;}
+                         if(s2=='b') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOVPW_VALUE=atof(buf); printf("_uSIO_uOVPW_VALUE=%.3f\r\n",_uSIO_uOVPW_VALUE);  break;}
+                         if(s2=='c') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOVPR_VALUE=atof(buf); printf("_uSIO_uOVPR_VALUE=%.3f\r\n",_uSIO_uOVPR_VALUE);  break;}
+                         if(s2=='d') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOCPF_VALUE=atof(buf); printf("_uSIO_uOCPF_VALUE=%.3f\r\n",_uSIO_uOCPF_VALUE);  break;}
+                         if(s2=='e') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOCPW_VALUE=atof(buf); printf("_uSIO_uOCPW_VALUE=%.3f\r\n",_uSIO_uOCPW_VALUE);  break;}
+                         if(s2=='f') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUVPF_VALUE=atof(buf); printf("_uSIO_uUVPF_VALUE=%.3f\r\n",_uSIO_uUVPF_VALUE);  break;}
+                         if(s2=='g') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUVPW_VALUE=atof(buf); printf("_uSIO_uUVPW_VALUE=%.3f\r\n",_uSIO_uUVPW_VALUE);  break;}
+                         if(s2=='h') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUVPR_VALUE=atof(buf); printf("_uSIO_uUVPR_VALUE=%.3f\r\n",_uSIO_uUVPR_VALUE);  break;}
+                         if(s2=='i') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMCVPF_VALUE=atof(buf); printf("_uSIO_uIMCVPF_VALUE=%.3f\r\n",_uSIO_uIMCVPF_VALUE);  break;}
+                         if(s2=='j') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMCVPW_VALUE=atof(buf); printf("_uSIO_uIMCVPW_VALUE=%.3f\r\n",_uSIO_uIMCVPW_VALUE);  break;}
+                         if(s2=='k') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMCVPR_VALUE=atof(buf); printf("_uSIO_uIMCVPR_VALUE=%.3f\r\n",_uSIO_uIMCVPR_VALUE);  break;}
+                         if(s2=='l') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOTPF_VALUE=atof(buf); printf("_uSIO_uOTPF_VALUE=%.3f\r\n",_uSIO_uOTPF_VALUE);  break;}
+                         if(s2=='m') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOTPW_VALUE=atof(buf); printf("_uSIO_uOTPW_VALUE=%.3f\r\n",_uSIO_uOTPW_VALUE);  break;}
+                         if(s2=='n') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uOTPR_VALUE=atof(buf); printf("_uSIO_uOTPR_VALUE=%.3f\r\n",_uSIO_uOTPR_VALUE);  break;}
+                         if(s2=='p') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUTPF_VALUE=atof(buf); printf("_uSIO_uUTPF_VALUE=%.3f\r\n",_uSIO_uUTPF_VALUE);  break;}
+                         if(s2=='q') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUTPW_VALUE=atof(buf); printf("_uSIO_uUTPW_VALUE=%.3f\r\n",_uSIO_uUTPW_VALUE);  break;}
+                         if(s2=='r') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uUTPR_VALUE=atof(buf); printf("_uSIO_uUTPR_VALUE=%.3f\r\n",_uSIO_uUTPR_VALUE);  break;}
+                         if(s2=='s') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMTPF_VALUE=atof(buf); printf("_uSIO_uIMTPF_VALUE=%.3f\r\n",_uSIO_uIMTPF_VALUE);  break;}
+                         if(s2=='t') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMTPW_VALUE=atof(buf); printf("_uSIO_uIMTPW_VALUE=%.3f\r\n",_uSIO_uIMTPW_VALUE);  break;}
+                         if(s2=='u') { c=&_uRX3_BUF[3]; strcpy(buf,c);  _uSIO_uIMTPR_VALUE=atof(buf); printf("_uSIO_uIMTPR_VALUE=%.3f\r\n",_uSIO_uIMTPR_VALUE);  break;}
+                         break;
+                 } 
+      
+                 
+           
+      case 'm' :{                    
+        //지능형 SW work
+        if(s2=='a') { if(s3=='1') { _uBALTEST_MN=1; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='2') { _uBALTEST_MN=2; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='3') { _uBALTEST_MN=3; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='4') { _uBALTEST_MN=4; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='5') { _uBALTEST_MN=5; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='6') { _uBALTEST_MN=6; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='7') { _uBALTEST_MN=7; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='8') { _uBALTEST_MN=8; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='9') { _uBALTEST_MN=9; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='a') { _uBALTEST_MN=10; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='b') { _uBALTEST_MN=11; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='c') { _uBALTEST_MN=12; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='d') { _uBALTEST_MN=13; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='e') { _uBALTEST_MN=14; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='f') { _uBALTEST_MN=15; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='g') { _uBALTEST_MN=16; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      if(s3=='h') { _uBALTEST_MN=17; printf("BAL_Module_Numer=%02d\r\n",_uBALTEST_MN); }
+                      
+                    break;}    
+                    
+        if(s2=='b') { if(s3=='1') { _uBALTEST_CN=1; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='2') { _uBALTEST_CN=2; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='3') { _uBALTEST_CN=3; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='4') { _uBALTEST_CN=4; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='5') { _uBALTEST_CN=5; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='6') { _uBALTEST_CN=6; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='7') { _uBALTEST_CN=7; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='8') { _uBALTEST_CN=8; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='9') { _uBALTEST_CN=9; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='a') { _uBALTEST_CN=10; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='b') { _uBALTEST_CN=11; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                      if(s3=='c') { _uBALTEST_CN=12; printf("BAL_Cell_Numer=%02d\r\n",_uBALTEST_CN); }
+                    
+                    break;}
+
+        void SIO4_INST(void)// Baterry Module 과의 통신 
+{
+  uint8_t s1,s2;//,s3;
+  
+  //void HAL_IncTick(); //지능형 SW과제
+   
+  if (_uRX4_INST==1)	// 리턴문자까지 완성 입력됨 	
+  {
+    s1=_uRX4_BUF[1];  s2=_uRX4_BUF[2]; //s3=_uRX4_BUF[3];     
+    /*
+    switch (s1)
+    {		 
+      case 0x04 :{  _uMODULE_DT_RECEIVE();   break;    }                 
+                 
+      default : break;				
+					   															 
+    }
+    */
+     switch (s1)
+    {
+        case 's' : { if(s2=='a') {  _uMODULE_DT_RECEIVE();    break;  }
+                     break; }  
+        default : break;				
+					   															 
+    }
+
+      _uRX4_INST=0; _uRX4_PNT=0; _save4 = uwTick; uwTick=0; 	 
+   }
+}
+
+uint16_t _uBALTEST_MN=0; //지능형 SW work
+uint16_t _uBALTEST_CN=0; //지능형 SW work
+
+ //지능형 SW과제 Test mode 변경
+  
+  if(_uSIO_TESTF==1)
+  {
+    
+      //_uMAX_CV=_uSIO_MAXCV;
+      //_uMIN_CV=_uSIO_MINCV;
+      //_uMAX_CT=_uSIO_MAXCT;
+      //_uMIN_CT=_uSIO_MINCT;
+      //_uRACK_VOLT=_uSIO_RACKV;
+    
+    //지능형SW과제
+    _uOVPF_VALUE=_uSIO_uOVPF_VALUE;
+    _uOVPW_VALUE=_uSIO_uOVPW_VALUE;
+    _uOVPR_VALUE=_uSIO_uOVPR_VALUE;
+    _uOCPF_VALUE=_uSIO_uOCPF_VALUE;
+    _uOCPW_VALUE=_uSIO_uOCPW_VALUE;
+    _uUVPF_VALUE=_uSIO_uUVPF_VALUE;
+    _uUVPW_VALUE=_uSIO_uUVPW_VALUE;
+    _uUVPR_VALUE=_uSIO_uUVPR_VALUE;
+    _uIMCVPF_VALUE=_uSIO_uIMCVPF_VALUE;
+    _uIMCVPW_VALUE=_uSIO_uIMCVPW_VALUE;
+    _uIMCVPR_VALUE=_uSIO_uIMCVPR_VALUE;
+    _uOTPF_VALUE=_uSIO_uOTPF_VALUE;
+    _uOTPW_VALUE=_uSIO_uOTPW_VALUE;
+    _uOTPR_VALUE=_uSIO_uOTPR_VALUE;
+    _uUTPF_VALUE=_uSIO_uUTPF_VALUE;
+    _uUTPW_VALUE=_uSIO_uUTPW_VALUE;
+    _uUTPR_VALUE=_uSIO_uUTPR_VALUE;
+    _uIMTPF_VALUE=_uSIO_uIMTPF_VALUE;
+    _uIMTPW_VALUE=_uSIO_uIMTPW_VALUE;
+    _uIMTPR_VALUE=_uSIO_uIMTPR_VALUE;
+  }   
+
+  void RACK_FLAG_DT(void)
+{
+
+  printf("1._uCDOFF_MODE=%d \r\n",_uCDOFF_MODE);
+  printf("2._uRUN_MODE=%d \r\n",_uRUN_MODE);
+  printf("3.NORMALF=%d WARR=%d FAULT=%d \r\n",_RACK_NORMALF,_RACK_WARRF,_RACK_FAULTF);
+  printf("4.Order=%d RUN=%d Online=%d Emer=%d \r\n",_uR_ORDERF,_uR_RUNF,_uR_ONLINEF,_uREEMER);
+  printf("5.OVPW TF=%d  SEC=%d  WF=%d \r\n",_uOVPW_TF,_uOVPW_SEC,_uOVP_WF);
+  printf("6.OVPF TF=%d  SEC=%d  WF=%d \r\n",_uOVPF_TF,_uOVPF_SEC,_uOVP_FF);
+  printf("7._uUVPW_TF TF=%d  SEC=%d  WF=%d \r\n",_uUVPW_TF,_uUVPW_SEC,_uUVP_WF);
+  printf("8._uUVPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uUVPF_TF,_uUVPF_SEC,_uUVP_FF);
+  printf("9._uIMCVPW_TF TF=%d  SEC=%d  WF=%d \r\n",_uIMCVPW_TF,_uIMCVPW_SEC,_uIMCVP_WF);
+  printf("10._uIMCVPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uIMCVPF_TF,_uIMCVPF_SEC,_uIMCVP_FF);
+  printf("11._uOTPW_TF TF=%d  SEC=%d  WF=%d \r\n",_uOTPW_TF,_uOTPW_SEC,_uOTP_WF);
+  printf("12._uOTPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uOTPF_TF,_uOTPF_SEC,_uOTP_FF);
+  printf("13._uUTPW_TF TF=%d  SEC=%d  WF=%d \r\n",_uUTPW_TF,_uUTPW_SEC,_uUTP_WF);
+  printf("14._uUTPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uUTPF_TF,_uUTPF_SEC,_uUTP_FF);
+  printf("15._uIMTPW_TF TF=%d  SEC=%d  WF=%d \r\n",_uIMTPW_TF,_uIMTPW_SEC,_uIMTP_WF);
+  printf("16._uIMTPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uIMTPF_TF,_uIMTPF_SEC,_uIMTP_FF);
+  printf("17._uOCPF_TF TF=%d  SEC=%d  WF=%d \r\n",_uOCPF_TF,_uOCPF_SEC,_uOCP_FF);
+  printf("18._uMODULE_DT_OKF TF=%d  SEC=%d  WF=%d \r\n",_uMODULE_DT_OKF,_uMODULE_DT_SEC,_uMODULE_COMERRF);
+  printf("19._uCR_TF TF=%d  SEC=%d  WF=%d \r\n",_uCR_TF,_uCR_SEC,_uCR_FAULT);
+  printf("20._uDR_TF TF=%d  SEC=%d  WF=%d \r\n",_uDR_TF,_uDR_SEC,_uDR_FAULT);
+  printf("21._uDFUSE_FF=%d  _uCFUSE_FF=%d  \r\n",_uDFUSE_FF,_uCFUSE_FF);
+  printf("22._uEMS_COMERRF=%d  _uEMS_SEC=%d  \r\n",_uEMS_COMERRF,_uEMS_SEC);
+  printf("SYSCLK : %dHz \n", (int)SystemCoreClock); //지능형 SW과제
+  
+ 
+}
+      
