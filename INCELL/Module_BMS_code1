@@ -1,0 +1,40 @@
+ //지능형 SW과제
+        if(_uBOARD_ID == _uSET_P01) //_uSET_P01 = _uBALTEST_MN, _uSET_P05 = _uBALTEST_CN 
+       {
+         
+         if(_uSET_P05==1)
+         { _uLTC6811_BALANCING_WDCFG(0x01,0x00); }
+         if(_uSET_P05==2)
+         { _uLTC6811_BALANCING_WDCFG(0x02,0x00); }
+         if(_uSET_P05==3)
+         { _uLTC6811_BALANCING_WDCFG(0x04,0x00); }
+         if(_uSET_P05==4)
+         { _uLTC6811_BALANCING_WDCFG(0x08,0x00); }
+         if(_uSET_P05==5)
+         { _uLTC6811_BALANCING_WDCFG(0x10,0x00); }
+         if(_uSET_P05==6)
+         { _uLTC6811_BALANCING_WDCFG(0x20,0x00); }
+         if(_uSET_P05==7)
+         { _uLTC6811_BALANCING_WDCFG(0x40,0x00); }
+         if(_uSET_P05==8)
+         { _uLTC6811_BALANCING_WDCFG(0x80,0x00); }
+         if(_uSET_P05==9)
+         { _uLTC6811_BALANCING_WDCFG(0x00,0x01); }
+         if(_uSET_P05==10)
+         { _uLTC6811_BALANCING_WDCFG(0x00,0x02); }
+         if(_uSET_P05==11)
+         { _uLTC6811_BALANCING_WDCFG(0x00,0x04); }
+         if(_uSET_P05==12)
+         { _uLTC6811_BALANCING_WDCFG(0x00,0x08); }
+       }
+       
+       if(_uBOARD_ID != _uSET_P01 || _uSET_P05 > 13 || _uSET_P05 < 1) 
+	{ 
+	   _uLTC6811_BALANCING_WDCFG(0x00,0x00);
+	}
+       
+       _uBAL_test();
+       
+      //_uMODEBUS_FDT[48]=(0xff & _uSET_P01); //지능형 SW과제
+      _uMODEBUS_FDT[49]=(0xff & _uSET_P05); //지능형 SW과제
+
