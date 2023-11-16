@@ -1,0 +1,91 @@
+# cols: ['TIMESTAMP', 'BANK_DC_VOLT', 'BANK_DC_CURRENT', 'BANK_SOC', 'MAX_CELL_TEMPERATURE_OF_BANK', 'VOLT_gap', 'OCV_est', 'BATTERY_STATUS_FOR_CHARGE']
+# cols: ['time', 'V', 'I', 'SOC', 'T', 'V_gap', 'OCV', 'status']
+# cnn, res10, res18, res34, res50, res101, res152, LSTM,  // WRN, mlp, RNN, tranformer
+# MSELoss(), L1Loss()
+
+common:
+  output_dir: "/data/ess/output/State_Estimation/Operating-OCV_new"
+  output_name: "/cnn"
+  site: 'sionyu'
+  debug: false
+  seed: 0
+  data_per_oneday: 8
+
+  reproduce: false
+
+base:
+  experiment: true
+  # model
+  model: res10
+  task: 'estimation'
+
+  # parameter
+  epochs: 200
+  decay: 0.98
+
+  # data
+  train_batch_size: 32
+  test_batch_size : 8
+  num_workers: 0
+  drop_last: false
+  loss_fn: 'L1Loss'
+    
+  seconds: 25
+  input_cols: ['V', 'I', 'T', 'V_gap']
+  target_col: ['SOC']
+  BATTERY_STATUS_FOR_CHARGE : 3  #1(rest), 2(charge), 3(discharge)
+
+  split_ratio: [90,10,0]    # train, val, test
+
+
+
+phase1:
+  # model
+  model: res10
+  task: 'estimation'
+
+  # parameter
+  epochs: 200
+  decay: 0.98
+
+  # data
+  train_batch_size: 32
+  test_batch_size : 8
+  num_workers: 0
+  drop_last: false
+  loss_fn: 'L1Loss'
+    
+  seconds: 25
+  input_cols: ['V', 'I', 'T', 'V_gap']
+  target_col: ['OCV']
+  BATTERY_STATUS_FOR_CHARGE : 3  #1(rest), 2(charge), 3(discharge)
+
+  split_ratio: [90,10,0]    # train, val, test
+
+  # load_ckpt: none
+
+
+
+
+phase2:
+  # model
+  model: res10
+  task: 'estimation'
+
+  # parameter
+  epochs: 200
+  decay: 0.98
+
+  # data
+  train_batch_size: 32
+  test_batch_size : 8
+  num_workers: 0
+  drop_last: false
+  loss_fn: 'L1Loss'
+    
+  seconds: 25
+  input_cols: ['V', 'I', 'T', 'V_gap', 'SOC']   # the last column gonna be substituted the output of phase1 model
+  target_col: ['SOC']
+  BATTERY_STATUS_FOR_CHARGE : 3  #1(rest), 2(charge), 3(discharge)
+
+  split_ratio: [90,10,0]    # train, val, test
