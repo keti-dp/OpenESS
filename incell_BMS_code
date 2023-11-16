@@ -1,0 +1,291 @@
+    /*지능형 SW과제*/
+          CM = (SystemCoreClock / 1000000);
+           
+          end_time=mcu_runtime;
+          
+          start_timeF=1;
+          
+          Diff_time=end_time-start_time;
+          
+          if(Diff_time > max_runtime) { max_runtime = Diff_time; }  
+            
+            //Modbus protocol Maping
+           
+            int temp_dt, vref_dt; //지능형 SW과제
+            
+            temp_dt=(_uMCU_TEMP2*100);
+            vref_dt=(_uMCU_VREF*1000);
+           
+            
+           /*MCU monitoring*/
+            _uRACK_MODBUS_FDT[366]=(0xff00 & max_runtime)>>0x8;
+            _uRACK_MODBUS_FDT[367]=(0xff & max_runtime);
+            
+            _uRACK_MODBUS_FDT[368]=(0xff00 & temp_dt)>>0x8;
+            _uRACK_MODBUS_FDT[369]=(0xff & temp_dt);
+           
+            _uRACK_MODBUS_FDT[370]=(0xff00 & vref_dt)>>0x8;
+            _uRACK_MODBUS_FDT[371]=(0xff & vref_dt);
+           
+            
+            /*Stack use*/
+            _uRACK_MODBUS_FDT[372]=(stack_base)>>0x18;
+            _uRACK_MODBUS_FDT[373]=(0xff0000 & stack_base)>>0x10;
+            _uRACK_MODBUS_FDT[374]=(0xff00 & stack_base)>>0x8;
+            _uRACK_MODBUS_FDT[375]=(0xff & stack_base);
+            _uRACK_MODBUS_FDT[376]=(stack_limit)>>0x18;
+            _uRACK_MODBUS_FDT[377]=(0xff0000 & stack_limit)>>0x10;
+            _uRACK_MODBUS_FDT[378]=(0xff00 & stack_limit)>>0x8;
+            _uRACK_MODBUS_FDT[379]=(0xff & stack_limit);
+            _uRACK_MODBUS_FDT[380]=(stack_size)>>0x18;
+            _uRACK_MODBUS_FDT[381]=(0xff0000 & stack_size)>>0x10;
+            _uRACK_MODBUS_FDT[382]=(0xff00 & stack_size)>>0x8;
+            _uRACK_MODBUS_FDT[383]=(0xff & stack_size);
+            _uRACK_MODBUS_FDT[384]=(stack_pt)>>0x18;
+            _uRACK_MODBUS_FDT[385]=(0xff0000 & stack_pt)>>0x10;
+            _uRACK_MODBUS_FDT[386]=(0xff00 & stack_pt)>>0x8;
+            _uRACK_MODBUS_FDT[387]=(0xff & stack_pt);
+            _uRACK_MODBUS_FDT[388]=(0xff00 & stack_use)>>0x8;
+            _uRACK_MODBUS_FDT[389]=(0xff & stack_use);
+            _uRACK_MODBUS_FDT[390]=(0xff00 & stack_Percent)>>0x8;
+            _uRACK_MODBUS_FDT[391]=(0xff & stack_Percent);
+            _uRACK_MODBUS_FDT[392]=(0xff00 & max_stackuse)>>0x8;
+            _uRACK_MODBUS_FDT[393]=(0xff & max_stackuse);
+            
+            /*Clock monitoring*/
+            _uRACK_MODBUS_FDT[394]=(0xff00 & CM)>>0x8;
+            _uRACK_MODBUS_FDT[395]=(0xff & CM);
+            
+             /*Interupt Timer monitoring*/
+            _uRACK_MODBUS_FDT[396]=(0xff00 & _save1)>>0x8;
+            _uRACK_MODBUS_FDT[397]=(0xff & _save1);
+            _uRACK_MODBUS_FDT[398]=(0xff00 & _save3)>>0x8;
+            _uRACK_MODBUS_FDT[399]=(0xff & _save3);
+            _uRACK_MODBUS_FDT[400]=(0xff00 & _save4)>>0x8;
+            _uRACK_MODBUS_FDT[401]=(0xff & _save4);
+            
+            /*보호동작 값 송신*/
+            
+            not_dt=rtu_dt=0;
+            
+            _uRACK_MODBUS_FDT[402]=(0xff00 & _uOVPF_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[403]=(0xff & _uOVPF_VALUE2 );
+            _uRACK_MODBUS_FDT[404]=(0xff00 & _uOVPW_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[405]=(0xff & _uOVPW_VALUE2 );
+            _uRACK_MODBUS_FDT[406]=(0xff00 & _uOVPR_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[407]=(0xff & _uOVPR_VALUE2 );
+            _uRACK_MODBUS_FDT[408]=(0xff00 & _uOCPF_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[409]=(0xff & _uOCPF_VALUE2 );
+            _uRACK_MODBUS_FDT[410]=(0xff00 & _uOCPW_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[411]=(0xff & _uOCPW_VALUE2 );
+            _uRACK_MODBUS_FDT[412]=(0xff00 & _uUVPF_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[413]=(0xff & _uUVPF_VALUE2 );
+            _uRACK_MODBUS_FDT[414]=(0xff00 & _uUVPW_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[415]=(0xff & _uUVPW_VALUE2 );
+            _uRACK_MODBUS_FDT[416]=(0xff00 & _uUVPR_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[417]=(0xff & _uUVPR_VALUE2 );
+            _uRACK_MODBUS_FDT[418]=(0xff00 & _uIMCVPF_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[419]=(0xff & _uIMCVPF_VALUE2 );
+            _uRACK_MODBUS_FDT[420]=(0xff00 & _uIMCVPW_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[421]=(0xff & _uIMCVPW_VALUE2 );
+            _uRACK_MODBUS_FDT[422]=(0xff00 & _uIMCVPR_VALUE2 )>>0x8;
+            _uRACK_MODBUS_FDT[423]=(0xff & _uIMCVPR_VALUE2 );
+            
+            rtu_dt=(fabs(_uOTPF_VALUE2));
+            if(_uOTPF_VALUE2<0)
+            {
+              not_dt=~rtu_dt; not_dt+=0x01;
+              _uRACK_MODBUS_FDT[424]=(0xff00 & not_dt )>>0x8;
+              _uRACK_MODBUS_FDT[425]=(0xff & not_dt );
+            }
+            else
+            {
+              _uRACK_MODBUS_FDT[424]=(0xff00 & _uOTPF_VALUE2 )>>0x8;
+              _uRACK_MODBUS_FDT[425]=(0xff & _uOTPF_VALUE2 );
+            }
+            
+            rtu_dt=(fabs(_uOTPW_VALUE2));
+            if(_uOTPW_VALUE2<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01;
+             _uRACK_MODBUS_FDT[426]=(0xff00 & not_dt )>>0x8;
+             _uRACK_MODBUS_FDT[427]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[426]=(0xff00 & _uOTPW_VALUE2 )>>0x8;
+             _uRACK_MODBUS_FDT[427]=(0xff & _uOTPW_VALUE2 );
+            }
+            
+            rtu_dt=(fabs(_uOTPR_VALUE2));
+            if(_uOTPR_VALUE2<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+             _uRACK_MODBUS_FDT[428]=(0xff00 & not_dt )>>0x8;
+             _uRACK_MODBUS_FDT[429]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[428]=(0xff00 & _uOTPR_VALUE2 )>>0x8;
+             _uRACK_MODBUS_FDT[429]=(0xff & _uOTPR_VALUE2 );
+            }
+            
+            rtu_dt=(fabs(_uUTPF_VALUE2));
+            if(_uUTPF_VALUE2<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[430]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[431]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[430]=(0xff00 & _uUTPF_VALUE2 )>>0x8;
+             _uRACK_MODBUS_FDT[431]=(0xff & _uUTPF_VALUE2 );
+            }
+            
+            rtu_dt=(fabs(_uUTPW_VALUE2));
+            if(_uUTPW_VALUE2<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01;  
+            _uRACK_MODBUS_FDT[432]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[433]=(0xff & not_dt  );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[432]=(0xff00 & _uUTPW_VALUE2 )>>0x8;
+             _uRACK_MODBUS_FDT[433]=(0xff & _uUTPW_VALUE2  );
+            }
+            
+            rtu_dt=(fabs(_uUTPR_VALUE2));
+            if(_uUTPR_VALUE2<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[434]=(0xff00 & not_dt  )>>0x8;
+            _uRACK_MODBUS_FDT[435]=(0xff & not_dt  );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[434]=(0xff00 & _uUTPR_VALUE2  )>>0x8;
+             _uRACK_MODBUS_FDT[435]=(0xff & _uUTPR_VALUE2  );
+            }
+            
+            
+            _uRACK_MODBUS_FDT[436]=(0xff00 & _uIMTPF_VALUE2  )>>0x8;
+            _uRACK_MODBUS_FDT[437]=(0xff & _uIMTPF_VALUE2  );
+            _uRACK_MODBUS_FDT[438]=(0xff00 & _uIMTPW_VALUE2  )>>0x8;
+            _uRACK_MODBUS_FDT[439]=(0xff & _uIMTPW_VALUE2  );
+            _uRACK_MODBUS_FDT[440]=(0xff00 & _uIMTPR_VALUE2  )>>0x8;
+            _uRACK_MODBUS_FDT[441]=(0xff & _uIMTPR_VALUE2  );
+            
+            _uRACK_MODBUS_FDT[442]=(0xff00 & _uBALTEST_MN  )>>0x8;
+            _uRACK_MODBUS_FDT[443]=(0xff & _uBALTEST_MN  );
+            _uRACK_MODBUS_FDT[444]=(0xff00 & _uBALTEST_CN  )>>0x8;
+            _uRACK_MODBUS_FDT[445]=(0xff & _uBALTEST_CN  );
+            
+            _uRACK_MODBUS_FDT[446]=(0xff00 & _uOVPF_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[447]=(0xff & _uOVPF_VALUE3 );
+            _uRACK_MODBUS_FDT[448]=(0xff00 & _uOVPW_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[449]=(0xff & _uOVPW_VALUE3 );
+            _uRACK_MODBUS_FDT[450]=(0xff00 & _uOVPR_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[451]=(0xff & _uOVPR_VALUE3 );
+            _uRACK_MODBUS_FDT[452]=(0xff00 & _uOCPF_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[453]=(0xff & _uOCPF_VALUE3 );
+            _uRACK_MODBUS_FDT[454]=(0xff00 & _uOCPW_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[455]=(0xff & _uOCPW_VALUE3 );
+            _uRACK_MODBUS_FDT[456]=(0xff00 & _uUVPF_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[457]=(0xff & _uUVPF_VALUE3 );
+            _uRACK_MODBUS_FDT[458]=(0xff00 & _uUVPW_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[459]=(0xff & _uUVPW_VALUE3 );
+            _uRACK_MODBUS_FDT[460]=(0xff00 & _uUVPR_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[461]=(0xff & _uUVPR_VALUE3 );
+            _uRACK_MODBUS_FDT[462]=(0xff00 & _uIMCVPF_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[463]=(0xff & _uIMCVPF_VALUE3 );
+            _uRACK_MODBUS_FDT[464]=(0xff00 & _uIMCVPW_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[465]=(0xff & _uIMCVPW_VALUE3 );
+            _uRACK_MODBUS_FDT[466]=(0xff00 & _uIMCVPR_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[467]=(0xff & _uIMCVPR_VALUE3 );
+            
+            rtu_dt=(fabs(_uOTPF_VALUE3));
+            if(_uOTPF_VALUE3<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01;
+             _uRACK_MODBUS_FDT[468]=(0xff00 & not_dt )>>0x8;
+             _uRACK_MODBUS_FDT[469]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[468]=(0xff00 & _uOTPF_VALUE3 )>>0x8;
+             _uRACK_MODBUS_FDT[469]=(0xff & _uOTPF_VALUE3 );
+            }
+            
+            rtu_dt=(fabs(_uOTPW_VALUE3));
+            if(_uOTPW_VALUE3<0)
+            {
+              not_dt=~rtu_dt; not_dt+=0x01; 
+             _uRACK_MODBUS_FDT[470]=(0xff00 & not_dt )>>0x8;
+             _uRACK_MODBUS_FDT[471]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[470]=(0xff00 & _uOTPW_VALUE3 )>>0x8;
+             _uRACK_MODBUS_FDT[471]=(0xff & _uOTPW_VALUE3 );
+            }
+            
+            rtu_dt=(fabs(_uOTPR_VALUE3));
+            if(_uOTPR_VALUE3<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[472]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[473]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[472]=(0xff00 & _uOTPR_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[473]=(0xff & _uOTPR_VALUE3 );
+            }
+            
+            rtu_dt=(fabs(_uUTPF_VALUE3));
+            if(_uUTPF_VALUE3<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[474]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[475]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[474]=(0xff00 & _uUTPF_VALUE3 )>>0x8;
+             _uRACK_MODBUS_FDT[475]=(0xff & _uUTPF_VALUE3 );
+            }
+            
+            rtu_dt=(fabs(_uUTPW_VALUE3));
+            if(_uUTPW_VALUE3<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[476]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[477]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[476]=(0xff00 & _uUTPW_VALUE3 )>>0x8;
+             _uRACK_MODBUS_FDT[477]=(0xff & _uUTPW_VALUE3 );
+            }
+            
+            rtu_dt=(fabs(_uUTPR_VALUE3));
+            if(_uUTPR_VALUE3<0)
+            {
+             not_dt=~rtu_dt; not_dt+=0x01; 
+            _uRACK_MODBUS_FDT[478]=(0xff00 & not_dt )>>0x8;
+            _uRACK_MODBUS_FDT[479]=(0xff & not_dt );
+            }
+            else
+            {
+             _uRACK_MODBUS_FDT[478]=(0xff00 & _uUTPR_VALUE3 )>>0x8;
+             _uRACK_MODBUS_FDT[479]=(0xff & _uUTPR_VALUE3 );
+            }
+            
+            _uRACK_MODBUS_FDT[480]=(0xff00 & _uIMTPF_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[481]=(0xff & _uIMTPF_VALUE3 );
+            _uRACK_MODBUS_FDT[482]=(0xff00 & _uIMTPW_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[483]=(0xff & _uIMTPW_VALUE3 );
+            _uRACK_MODBUS_FDT[484]=(0xff00 & _uIMTPR_VALUE3 )>>0x8;
+            _uRACK_MODBUS_FDT[485]=(0xff & _uIMTPR_VALUE3 );
