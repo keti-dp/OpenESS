@@ -1,0 +1,50 @@
+void _uADC_TEMP_CHK(void)
+{ 
+  
+  ADC_ChannelConfTypeDef sCon; 
+  sCon.Channel = ADC_CHANNEL_TEMPSENSOR; 
+  sCon.Rank = 1;
+  sCon.SamplingTime = ADC_SAMPLETIME_84CYCLES;    
+  
+  HAL_ADC_ConfigChannel (&hadc1, &sCon); 
+  HAL_ADC_Start(&hadc1); // ADC 시작
+  HAL_ADC_PollForConversion(&hadc1, 10);
+
+  _uADC_Value[2] = HAL_ADC_GetValue(&hadc1);
+  _uMCU_TEMP =  _uADC_Value[2] * 3300;
+  _uMCU_TEMP /= 0xfff; //Reading in mV
+  _uMCU_TEMP /= 1000.0f; //Reading in Volts
+  _uMCU_TEMP -= 0.76f; // Subtract the reference voltage at 25℃
+  _uMCU_TEMP /= 0.0025; // Divide by slope 2.5mV
+  _uMCU_TEMP += 25.0; // Add the 25℃
+  
+  HAL_ADC_Stop(&hadc1); // ADC 종료
+
+}
+
+float _uMCU_VREF = 0;
+
+void _uADC_VREF_CHK(void)
+{
+   
+  
+  ADC_ChannelConfTypeDef sCon; 
+  sCon.Channel = ADC_CHANNEL_VREFINT; 
+  sCon.Rank = 1;
+  sCon.SamplingTime = ADC_SAMPLETIME_84CYCLES;    
+  
+  HAL_ADC_ConfigChannel (&hadc1, &sCon); 
+  HAL_ADC_Start(&hadc1); // ADC 시작
+  HAL_ADC_PollForConversion(&hadc1, 500);
+  
+  _uADC_Value[2] = HAL_ADC_GetValue(&hadc1);  
+  
+  //_uADC_DATA[2]=(float)_uADC_Value[2]*3300;
+  
+  _uMCU_VREF =  (1.21*4095)/(float)_uADC_Value[2];
+  
+  HAL_ADC_Stop(&hadc1); // ADC 종료
+
+}
+
+
