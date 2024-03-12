@@ -1,0 +1,1 @@
+python main.py --dataset "/STORAGE/ESS/01_DATA/TESTBED/0731_data_sc3_v1.csv" --mode "train" --model "usad" --lr 1e-4 --n_epochs 150 --batch_size 1024 --features "CPU usage" --es_epochs 15
