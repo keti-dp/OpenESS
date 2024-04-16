@@ -20,7 +20,7 @@
 
 ## 공개SW 서비스 제공
 - **사이트 정보** :
-	- [keti-dp.re.kr](https://keti-dp.re.kr/) : 공개SW 서비스를 위해 주관기관인 한국전자기술연구원에서 운영 및 관리하고 있는 사이트입니다.
+	- [ketidp(Open Site)](https://open.keti-dp.re.kr/) : 공개SW 서비스를 위해 주관기관인 한국전자기술연구원에서 운영 및 관리하고 있는 사이트입니다.
 	- [ketidp(Docker registry)](https://github.com/keti-dp/OpenESS/pkgs/container/openess-public) : 공개SW 분석 및 학습 모델을 공유하는 이미지 저장소입니다.
 - **가입 문의** : 
 	- 가입을 원하시는 분께서는 아래의 주소로 본인의 소개와 목적을 포함한 자유양식으로 메일을 보내주세요. 내부 검토를 통해 서비스를 제공해드립니다.
