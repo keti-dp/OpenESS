@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt
 # 소스코드 복사
 COPY ./ ./
 
-
+LABEL org.opencontainers.image.description "BMS Resorce Data Anomaly Detection Using USAD, DeepAnt and LSTM_USAD Model"
