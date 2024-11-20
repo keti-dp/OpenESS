@@ -17,7 +17,7 @@ from DeepAnt import DeepAnt_pred, DeepAnt_train
 
 
 class USADTrainSchema(BaseModel):
-    dataset_path: str = "./data/train.csv"
+    dataset_path: str = "Train Dataset"
     dim: int = 128
     hidden_size: int = 300
     lr: float = 1e-5
@@ -29,13 +29,13 @@ class USADTrainSchema(BaseModel):
 
 class USADPredSchema(BaseModel):
 
-    dataset_path: str = "./data/test.csv"
+    dataset_path: str = "Test Dataset"
     threshold: Optional[float] = "null"
 
 
 
 class DeepAntTrainSchema(BaseModel):
-    dataset_path: str = "./data/train.csv"
+    dataset_path: str = "Train Dataset"
     lr: float = 1e-3
     n_epochs: int = 150
     batch_size: int = 2048
@@ -44,7 +44,7 @@ class DeepAntTrainSchema(BaseModel):
 
 
 class DeepAntPredSchema(BaseModel):
-    dataset_path: str = "./data/test.csv"
+    dataset_path: str = "Test Dataset"
     threshold: Optional[float] = None
     
     
