@@ -58,7 +58,38 @@ history = model.fit(x_train, y_train, epochs=20, batch_size=64, validation_data=
 # SOH 추정
 soh_predictions = model.predict(x_test)
 
-
 print(soh_predictions[0])
 print(y_test)
+
+# SOH 예측 결과 출력
+for i in range(len(soh_predictions)):
+    print(f"실제 SOH: {y_test[i]:.4f}, 예측 SOH: {soh_predictions[i][0]:.4f}")
+
+# 학습 손실 및 예측 결과 Plot
+plt.figure(figsize=(20, 7))
+
+# 학습 손실
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Training & Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+# 학습 손실 및 예측 결과 Plot
+plt.figure(figsize=(20, 7))
+
+
+# SOH 예측 비교
+plt.subplot(1, 2, 2)
+plt.plot(y_test, label='Actual SOH')
+plt.plot(soh_predictions, label='Predicted SOH')
+plt.title('Actual vs Predicted SOH')
+plt.xlabel('Cycle')
+plt.ylabel('SOH')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
 
