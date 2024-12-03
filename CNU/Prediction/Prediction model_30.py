@@ -8,7 +8,7 @@ from tensorflow.keras.layers import LSTM,Dropout,Dense,Activation
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.optimizers import Adam
 
-
+## 30초 HI
 # 데이터 파일 로드
 hi_soh_data = pd.read_csv('경로 설정')
 hi_soh_data = hi_soh_data.to_numpy()
@@ -89,7 +89,6 @@ plt.title('Actual vs Predicted SOH')
 plt.xlabel('Cycle')
 plt.ylabel('SOH')
 plt.legend()
-
 plt.tight_layout()
 plt.show()
 
