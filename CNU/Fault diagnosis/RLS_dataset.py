@@ -95,3 +95,13 @@ def find_ocv_from_soc(soc, lookup_table):
         extrapolated_ocv = np.interp(soc, socs, ocvs)
     
     return extrapolated_ocv
+
+# 실시간 오차 공분산 및 gain 값 업데이트
+# 배터리 시스템 level에 따라 covariance값 조정 필요
+def calculate_gain_and_covariance_cell(phi, P, forgetting_factor):
+    P_phi = P @ phi
+    gain_denominator = forgetting_factor + phi.T @ P @ phi 
+    gain = P_phi / gain_denominator
+    covariance = (P - gain @ phi.T @ P) / forgetting_factor
+    covariance = np.clip(covariance, 0, 0.001) 
+    return gain, covariance
