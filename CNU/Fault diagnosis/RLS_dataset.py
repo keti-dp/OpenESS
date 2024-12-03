@@ -185,3 +185,43 @@ def process_condition_for_cycle(condition_dir, cycle_num, condition_name):
         SOC_all_cells.append(SOC_ref)  # SOC 값을 각 셀별로 저장
     
     return Ri_estimates_all_cells, Rdiff_estimates_all_cells, Cdiff_estimates_all_cells, OCV_all_cells, SOC_all_cells
+
+
+from datetime import datetime, timedelta
+
+# Process and save data for each cycle with TIMESTAMP
+def save_results_for_cycle_with_timestamp(cycle_num, Ri_all, Rdiff_all, Cdiff_all, OCV_all, SOC_all, condition_name):
+    save_path = os.path.join(save_dir, f'{condition_name}_Cycle_{cycle_num}_Results.csv')
+    
+    # 2023년 10월 1일을 시작 날짜로 설정
+    start_date = datetime(2023, 10, 1)
+    
+    # 각 사이클마다 하루씩 날짜를 추가
+    cycle_date = start_date + timedelta(days=cycle_num - 1)
+    
+    with open(save_path, 'w') as f:
+        f.write('TIMESTAMP,Cell,Ri,Rdiff,Cdiff,OCV,SOC\n')  # 헤더에 Timestamp 추가
+        for cell_index in range(6):
+            for t in range(len(Ri_all[cell_index])):
+                # t초마다 시간을 기록하도록 변경
+                TIMESTAMP = cycle_date + timedelta(seconds=t)  # t초마다 1초씩 증가된 시간
+                
+                # Timestamp 포맷은 YYYY-MM-DD HH:MM:SS
+                TIMESTAMP_str = TIMESTAMP.strftime('%Y-%m-%d %H:%M:%S')
+                
+                # CSV 파일에 TIMESTAMP와 데이터를 기록
+                f.write(f'{TIMESTAMP_str},{cell_index + 1},{Ri_all[cell_index][t]},{Rdiff_all[cell_index][t]},{Cdiff_all[cell_index][t]},{OCV_all[cell_index][t]},{SOC_all[cell_index][t]}\n')
+
+# Process and save data for each cycle with TIMESTAMP
+for cycle_num in range(1, 101):
+    # Process normal condition
+    Ri_normal, Rdiff_normal, Cdiff_normal, OCV_normal, SOC_normal = process_condition_for_cycle(normal_dir, cycle_num, 'normal')
+    save_results_for_cycle_with_timestamp(cycle_num, Ri_normal, Rdiff_normal, Cdiff_normal, OCV_normal, SOC_normal, 'normal')
+    
+    # Process overcharge condition
+    Ri_overcharge, Rdiff_overcharge, Cdiff_overcharge, OCV_overcharge, SOC_overcharge = process_condition_for_cycle(overcharge_dir, cycle_num, 'overcharge')
+    save_results_for_cycle_with_timestamp(cycle_num, Ri_overcharge, Rdiff_overcharge, Cdiff_overcharge, OCV_overcharge, SOC_overcharge, 'overcharge')
+    
+    # Process overdischarge condition
+    Ri_overdischarge, Rdiff_overdischarge, Cdiff_overdischarge, OCV_overdischarge, SOC_overdischarge = process_condition_for_cycle(overdischarge_dir, cycle_num, 'overdischarge')
+    save_results_for_cycle_with_timestamp(cycle_num, Ri_overdischarge, Rdiff_overdischarge, Cdiff_overdischarge, OCV_overdischarge, SOC_overdischarge, 'overdischarge')
