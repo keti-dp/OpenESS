@@ -1,3 +1,5 @@
+## 라이브러리
+
 import os
 import pandas as pd
 import numpy as np
@@ -18,6 +20,7 @@ from keras.models import Model, load_model
 from keras.layers import Input, Dense
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras import regularizers
+
 
 # 배터리 정상/과충전/과방전 모듈(6S2P) 전압, 전류 데이터 셋 기반 내부 모델 파라미터(Ri, Rdiff, Cdiff) 추출
 
