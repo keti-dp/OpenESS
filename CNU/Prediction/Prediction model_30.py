@@ -54,12 +54,8 @@ model.compile(loss='mse', optimizer=optimizer, metrics=['mae'])
 
 history = model.fit(x_train, y_train, epochs=20, batch_size=64, validation_data=(x_test, y_test))
 
-
 # SOH 추정
 soh_predictions = model.predict(x_test)
-
-print(soh_predictions[0])
-print(y_test)
 
 # SOH 예측 결과 출력
 for i in range(len(soh_predictions)):
