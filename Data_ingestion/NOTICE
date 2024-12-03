@@ -42,6 +42,7 @@ timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
 
 google_storage_class.py - storage - Apache License 2.0
 
+docker_monitoring.py - docker, telegram - Apache License 2.0, GNU General Public License (GPLv3)
 
         ---------------------------------------------------------------------------
         Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
