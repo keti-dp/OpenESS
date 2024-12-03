@@ -79,3 +79,89 @@ def find_ocv_from_soc(soc, lookup_table):
         extrapolated_ocv = np.interp(soc, socs, ocvs)
     
     return extrapolated_ocv
+
+
+
+
+# Initial SOC calculation from voltage
+Init_soc_rack = [find_soc_from_voltage(vol, sorted_OCV_SOC_lookup) for vol in rack_voltage]
+
+# Ah counting to calculate SOC
+SOC_ref_rack = []
+current_SOC = Init_soc_rack[0]
+
+for i in range(len(rack_current)):
+    delta_SOC = (rack_current[i] / Init_cap) * (Time / 3600)
+    current_SOC += delta_SOC
+    SOC_ref_rack.append(current_SOC)
+
+OCV_rack = [find_ocv_from_soc(soc, sorted_SOC_OCV_lookup) for soc in SOC_ref_rack]
+
+theta = np.array([Vector_b0, Vector_b1, Vector_a1]).reshape(-1, 1)
+P = ErrorCovariance
+
+Ri_estimates = [Init_Ri]
+Rdiff_estimates = [Init_Rdiff]
+Cdiff_estimates = [Init_Cdiff]
+
+def calculate_gain_and_covariance(phi, P, forgetting_factor):
+    P_phi = P @ phi
+    gain_denominator = forgetting_factor + phi.T @ P @ phi 
+    gain = P_phi / gain_denominator
+    covariance = (P - gain @ phi.T @ P) / forgetting_factor
+    covariance = np.clip(covariance, 0, 1e-10)  # Clip the values of covariance
+    return gain, covariance
+
+gain_values = []
+overpotential_values = []
+RlsEstimatedVoltage_values = []
+RlsVoltageError_values = []
+covariance_values = []
+theta_values = []
+phi_values = []
+
+for t in range(1, len(rack_voltage)):
+    voltage = rack_voltage[t]
+    current = rack_current[t]
+    prev_current = rack_current[t-1]
+    ocv = OCV_rack[t]
+
+    overpotential = ocv - voltage
+    overpotential_values.append(overpotential)
+
+    phi = np.array([current, prev_current, overpotential]).reshape(-1, 1)
+    phi_values.append(phi.flatten())
+
+    RlsEstimatedVoltage = theta.T @ phi
+    RlsEstimatedVoltage_values.append(RlsEstimatedVoltage[0, 0])
+
+    RlsVoltageError = voltage - ocv - RlsEstimatedVoltage
+    RlsVoltageError_values.append(RlsVoltageError[0, 0])
+
+
+    gain, covariance = calculate_gain_and_covariance(phi, P, ForgettingFactor)
+    gain_values.append(gain.flatten())
+    covariance_values.append(covariance.flatten())
+
+    P = covariance
+
+    theta = theta + gain @ RlsVoltageError
+    theta = np.abs(theta)
+    theta_values.append(theta.flatten())
+
+    Ri = theta[0, 0]
+    Rdiff = (theta[1, 0] - theta[2, 0] * theta[0, 0]) / (1 - theta[2, 0])
+    Cdiff = 1 / (theta[1, 0] - theta[2, 0] * theta[0, 0])
+
+    Ri = np.abs(Ri)
+    Rdiff = np.abs(Rdiff)
+    Cdiff = np.abs(Cdiff)
+
+    Ri_estimates.append(Ri)
+    Rdiff_estimates.append(Rdiff)
+    Cdiff_estimates.append(Cdiff)
+
+gain_values = np.array(gain_values).reshape(-1, 3)
+covariance_values = np.array(covariance_values).reshape(-1, 9)  # 3x3 matrix flattened
+theta_values = np.array(theta_values).reshape(-1, 3)
+phi_values = np.array(phi_values).reshape(-1, 3)
