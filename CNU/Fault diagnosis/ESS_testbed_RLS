@@ -1,0 +1,17 @@
+# 판리 2호 Bank 1(Rack 9개, Rack 1개당 Tray 20S, Tray 1개당 12S60P --> Rack 1개당 240S60P) / 
+# Bank 2(Rack 8개, Rack 1개당 Tray 20S, Tray 1개당 12S20P --> Rack 1개당 240S60P)
+# 컨테이너(Bank 1, 2 포함) : 3,320kWh
+
+# 백마 Bank 1(Rack 9개, Rack 1개당 Tray 20S, Tray 1개당 12S60P --> Rack 1개당 240S60P)
+# 컨테이너(Bank 1만) : 1,476kWh
+
+# 황금 Bank 1(Rack 11개, Rack 1개당 Tray 17S, Tray 1개당 12S60P --> Rack 1개당 204*60P)
+# 컨테이너(Bank 1만) : 1,826kWh
+
+# 판리 2호(Bank 1의 Rack 한개) 초기 용량 : 3,320kWh * 9/17 = 1757.647hWh --> Rack 1개(1757.647hWh/9 = 195.294kWh) 
+# --> 195.294kWh/(3.56 * 240) = 228.57Ah
+# 백마(Bank 1의 Rack 한개) 초기 용량 : 1,476kWh --> Rack 1개(1,476kWh/9 = 164kWh) --> 164kWh/(3.56 * 240) = 191.95Ah
+# 황금(Bank 1의 Rack 한개) 초기 용량 : 1,826kWh --> Rack 1개(1,826kWh/11 = 166kWh) --> 166kWh/(3.56 * 204) = 228.57Ah
+
+# Ri, Rdiff : S/P
+# Cdiff : P/S
