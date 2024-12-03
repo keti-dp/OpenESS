@@ -105,3 +105,83 @@ def calculate_gain_and_covariance_cell(phi, P, forgetting_factor):
     covariance = (P - gain @ phi.T @ P) / forgetting_factor
     covariance = np.clip(covariance, 0, 0.001) 
     return gain, covariance
+
+
+def process_condition_for_cycle(condition_dir, cycle_num, condition_name):
+    cycle_filename = f'Cycle_{cycle_num}.csv'
+    condition_data = pd.read_csv(os.path.join(condition_dir, cycle_filename))
+    
+    # Initialize lists to store results for this cycle
+    Ri_estimates_all_cells = []
+    Rdiff_estimates_all_cells = []
+    Cdiff_estimates_all_cells = []
+    OCV_all_cells = []
+    SOC_all_cells = []  # SOC 저장할 리스트 추가
+    
+    for cell in cells_to_analyze:
+        Volin = condition_data.iloc[:, [cell - 1]]  # Use cell 1 to 6 voltage data
+        Curin = condition_data.iloc[:, [7]] / 2  # Current is halved as it's divided by 2 in the original code
+
+        Init_soc = [find_soc_from_voltage(vol, sorted_OCV_SOC_lookup) for vol in Volin.iloc[:, 0]]
+
+        SOC_ref = []
+        current_SOC = Init_soc[0]
+
+        for i in range(len(Curin)):
+            delta_SOC = (Curin.iloc[i, 0] / Init_cap) * (Time / 3600)
+            current_SOC += delta_SOC
+            SOC_ref.append(current_SOC)
+
+        OCV_ref = [find_ocv_from_soc(soc, sorted_SOC_OCV_lookup) for soc in SOC_ref]
+
+        theta = np.array([Vector_b0, Vector_b1, Vector_a1]).reshape(-1, 1)
+        P = ErrorCovariance
+
+        Ri_estimates = [Init_Ri]
+        Rdiff_estimates = [Init_Rdiff]
+        Cdiff_estimates = [Init_Cdiff]
+
+        overpotential_values = []
+
+        for t in range(1, len(Volin)):
+            voltage = Volin.iloc[t, 0]
+            current = Curin.iloc[t, 0]
+            prev_current = Curin.iloc[t-1, 0]
+            ocv = OCV_ref[t]
+
+            overpotential = voltage - ocv
+            overpotential_values.append(overpotential)
+
+            overpotential_prev = overpotential_values[-2] if t > 1 else 0
+            
+            phi = np.array([current, prev_current, overpotential_prev]).reshape(-1, 1)
+            
+            gain, covariance = calculate_gain_and_covariance_cell(phi, P, ForgettingFactor)
+            P = covariance
+
+            RlsEstimatedVoltage = theta.T @ phi
+
+            RlsVoltageError = voltage - ocv - RlsEstimatedVoltage
+
+            theta = theta + gain @ RlsVoltageError
+            theta = np.abs(theta)
+
+            Ri = np.abs(theta[0, 0])
+            Rdiff = (np.abs(theta[1, 0]) -  (np.abs(theta[2, 0]) * np.abs(theta[0, 0]))) / (1 - np.abs(theta[2, 0]))
+            Cdiff = 1 / (np.abs(theta[1, 0]) - (np.abs(theta[2, 0]) * np.abs(theta[0, 0])))
+
+            Ri = np.abs(Ri)
+            Rdiff = np.abs(Rdiff)
+            Cdiff = np.abs(Cdiff)
+            
+            Rdiff_estimates.append(Rdiff)
+            Cdiff_estimates.append(Cdiff)
+            Ri_estimates.append(Ri)
+
+        Ri_estimates_all_cells.append(Ri_estimates)
+        Rdiff_estimates_all_cells.append(Rdiff_estimates)
+        Cdiff_estimates_all_cells.append(Cdiff_estimates)
+        OCV_all_cells.append(OCV_ref)
+        SOC_all_cells.append(SOC_ref)  # SOC 값을 각 셀별로 저장
+    
+    return Ri_estimates_all_cells, Rdiff_estimates_all_cells, Cdiff_estimates_all_cells, OCV_all_cells, SOC_all_cells
