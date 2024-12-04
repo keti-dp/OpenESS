@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: snu-anomaly--access
+  namespace: space-openess
+spec:
+  selector:
+    matchLabels:
+      serving.kserve.io/inferenceservice: snu-anomaly
+  rules:
+  - from:
+    - source:
+        ipBlocks: ["0.0.0.0/0"]  # Allow traffic from any IP
+
