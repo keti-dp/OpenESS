@@ -1,0 +1,81 @@
+metadata:
+  name: maxvol-xgboost-hy-experiment
+  namespace: space-openess
+spec:
+  parameters:
+    - name: lr
+      parameterType: double
+      feasibleSpace:
+        max: '0.03'
+        min: '0.01'
+        step: '0.01'
+    - name: max_depth
+      parameterType: int
+      feasibleSpace:
+        max: '20'
+        min: '10'
+        step: '1'
+    - name: n_estimators
+      parameterType: int
+      feasibleSpace:
+        max: '200'
+        min: '50'
+        step: '50'
+  objective:
+    type: minimize
+    goal: 0.00001
+    objectiveMetricName: mse
+    metricStrategies:
+      - name: mse
+        value: min
+  algorithm:
+    algorithmName: random
+  trialTemplate:
+    retain: true
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/inject: 'false'
+          spec:
+            containers:
+              - name: training-container
+                image: >-
+                  ghcr.io/keti-dp/openess-public:keti.ai_maxvol_xgboost_models-0.4
+                command:
+                  - python
+                  - /app/main.py
+                  - '--train_data_path=/mnt/train/'
+                  - '--test_data_path=/mnt/test/'
+                  - '--lr=${trialParameters.lr}'
+                  - '--max_depth=${trialParameters.max_depth}'
+                  - '--n_estimators=${trialParameters.n_estimators}'
+                volumeMounts:
+                  - mountPath: /mnt
+                    name: katib-dataset
+            restartPolicy: Never
+            volumes:
+              - name: katib-dataset
+                persistentVolumeClaim:
+                  claimName: katib-dataset
+    trialParameters:
+      - name: lr
+        reference: lr
+      - name: max_depth
+        reference: max_depth
+      - name: n_estimators
+        reference: n_estimators
+    primaryContainerName: training-container
+    successCondition: status.conditions.#(type=="Complete")#|#(status=="True")#
+    failureCondition: status.conditions.#(type=="Failed")#|#(status=="True")#
+  parallelTrialCount: 3
+  maxTrialCount: 10
+  maxFailedTrialCount: 3
+  metricsCollectorSpec:
+    collector:
+      kind: StdOut
+  resumePolicy: Never
+
