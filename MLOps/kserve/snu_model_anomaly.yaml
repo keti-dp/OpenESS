@@ -1,0 +1,22 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "snu-anomaly"
+  namespace: "space-openess"
+spec:
+  predictor:
+    pytorch:
+      storageUri: "pvc://snu-models/models"
+      runtimeVersion: "0.12.0"
+      args:
+        - "--ts-config"
+        - "/mnt/models/config/config.properties"
+        - "--disable-token-auth"
+      resources:
+        requests:
+          cpu: "1"
+          memory: "4Gi"
+        limits:
+          cpu: "2"
+          memory: "8Gi"
+
