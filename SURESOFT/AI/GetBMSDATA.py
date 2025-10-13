@@ -3,8 +3,7 @@ import time
 import datetime
 import threading
 import os
-import pandas as pd
-from serial.tools import list_ports
+
 
 
 class BMS:
@@ -54,8 +53,9 @@ class BMS:
                 sensor.flushInput()
                 sensor.flushInput()
                 return sensor
-            except:
+            except ConnectionError as e:
                 self.status = "ConnectionError"
+                print(e)
                 time.sleep(1)
 
     def make_record_file(self):
@@ -94,8 +94,9 @@ class BMS:
         """
         try:
             self.log = self.sensor.readline().decode("utf-8")
-        except:
+        except ConnectionError as e:
             self.status = "ConnectionError"
+            print(e)
             self.sensor = self.connect_sensor(self.port_num, self.bandrate)
 
             return
