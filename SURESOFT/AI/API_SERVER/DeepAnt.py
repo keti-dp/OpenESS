@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import joblib
+import os
 
 
 from sklearn.preprocessing import MinMaxScaler
@@ -130,10 +131,20 @@ class DeepAnt_train:
 
         return history
 
-    def save_model(self, id_num):
+    def save_model(self, id_num, dataset_path: str, es_epochs: int = None):
 
         torch.save(
-            {"features": self.features, "weights": self.model.state_dict()},
+            {
+                "features": self.features, 
+                "weights": self.model.state_dict(),
+                "params": {
+                    "n_epochs": self.n_epochs,
+                    "es_epochs": es_epochs if es_epochs is not None else 0,
+                    "lr": self.lr,
+                    "batch_size": self.batch_size,
+                },
+                "dataset": os.path.basename(dataset_path),
+            },
             f"./model/deepant_model_{id_num}.pth",
         )
         

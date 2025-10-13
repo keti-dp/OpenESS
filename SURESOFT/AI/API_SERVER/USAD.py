@@ -86,18 +86,29 @@ class USAD_train:
 
         return history
 
-    def save_model(self, id_num):
 
+    def save_model(self, id_num, dataset_path: str, es_epochs: int = None):
+        
         torch.save(
             {
                 "feature": self.features,
                 "encoder": self.model.encoder.state_dict(),
                 "decoder1": self.model.decoder1.state_dict(),
                 "decoder2": self.model.decoder2.state_dict(),
+                "params": {
+                    "dim": self.w_size // len(self.features),
+                    "hidden_size": self.hidden_size,
+                    "n_epochs": self.n_epochs,
+                    "es_epochs": es_epochs if es_epochs is not None else 0,
+                    "lr": self.lr,
+                    "batch_size": self.batch_size,
+                },
+                "dataset": os.path.basename(dataset_path),
             },
             f"./model/usad_model_{id_num}.pth",
         )
         
+
 
 
 class USAD_pred:
@@ -121,11 +132,18 @@ class USAD_pred:
         features = checkpoint["feature"]
         w_size = checkpoint["encoder"]["linear1.weight"].shape[1]
         z_size = checkpoint["encoder"]["linear3.weight"].shape[0]
+        params = checkpoint["params"]
+        n_epochs = params["n_epochs"]
+        es_epochs = params["es_epochs"]
+        lr = params["lr"]
+        batch_size = params["batch_size"]
+        hidden_size = params["hidden_size"]
         model = UsadModel(w_size, z_size)
         model.encoder.load_state_dict(checkpoint["encoder"])
         model.decoder1.load_state_dict(checkpoint["decoder1"])
         model.decoder2.load_state_dict(checkpoint["decoder2"])
         model = model.to_device(model, model.device)
+        
         return model, w_size, z_size, features
 
     def load_dataset(self, data):
