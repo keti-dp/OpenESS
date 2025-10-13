@@ -79,11 +79,11 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
         BATCH_SIZE = int(param.batch_size)
         FEATURES = param.features
         ES_EPOCHS = int(param.es_epochs)
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid Type Error")
     try:
         data, FEATURES = read_data(DATASET_PATH, FEATURES)
-    except:
+    except Exception:
         raise HTTPException(status_code=404, detail="NOT Found Exception")
     usad = USAD_train(
         batch_size=BATCH_SIZE, n_epochs=N_EPOCHS, lr=LR, hidden_size=HIDDEN_SIZE
@@ -91,13 +91,13 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
     try:
         data = usad.fit_scaler(data, id_num)
         train_loader, val_loader = usad.load_dataset(data, DIM, FEATURES)
-        history = usad.fit(
+        usad.fit(
             train_loader=train_loader,
             val_loader=val_loader,
             lr=LR,
             es_epochs=ES_EPOCHS,
         )
-    except:
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     usad.save_model(id_num)
     return_result = {"id":id_num, "result":"USAD Model Training Done"}
@@ -115,7 +115,7 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
 async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
     try:
         DATASET_PATH = str(dataset)
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid Type Error")
     
 
@@ -128,7 +128,7 @@ async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
     usad_model = USAD_pred(USAD_SCALER_PATH, USAD_MODEL_PATH)
     try:
         data, features = read_data(DATASET_PATH, usad_model.features)
-    except:
+    except Exception:
         raise HTTPException(status_code=404, detail="NOT Found Exception")
     try:
         test_loader, time_index = usad_model.load_dataset(data)
@@ -139,7 +139,7 @@ async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
 
         with open("./logs/USAD_Prediction.txt", "w") as f:
             f.write(json.dumps({x: y for x, y in zip(time_index, results)}, indent=4))
-    except:
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     return_result = {"id":model_id, "result":result}
     return return_result
@@ -162,25 +162,25 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
         BATCH_SIZE = int(param.batch_size)
         FEATURES = param.features
         ES_EPOCHS = int(param.es_epochs)
-    except:
+    except Exception:
         HTTPException(status_code=400, detail="Invalid Type Value")
 
     try:
         data, FEATURES = read_data(DATASET_PATH, FEATURES)
-    except:
+    except Exception:
         raise HTTPException(status_code=404, deatil="Not Found Exception")
     try:
         deepant = DeepAnt_train(BATCH_SIZE, N_EPOCHS, LR, FEATURES)
         data = deepant.fit_scaler(data, id_num)
         train_loader, val_loader = deepant.load_dataset(data)
-        history = deepant.fit(
+        deepant.fit(
             train_loader=train_loader,
             val_loader=val_loader,
             lr=LR,
             es_epochs=ES_EPOCHS,
         )
         deepant.save_model(id_num)
-    except:
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     return_result = {"model_id":id_num, "result":"deepant Model Training Done"}
     return return_result
@@ -198,7 +198,7 @@ async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
     try:
         model_id = int(model_id)
         DATASET_PATH = str(dataset)
-    except:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid Type Value")
     
 
@@ -208,7 +208,7 @@ async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
     deepant_model = DeepAnt_pred(DEEPANT_SCALER_PATH, DEEPANT_MODEL_PATH)
     try:
         data, __ = read_data(DATASET_PATH, deepant_model.features)
-    except:
+    except Exception:
         HTTPException(status_code=404, deatil="Not Found Exception")
     try:
         test_loader, time_index = deepant_model.load_dataset(data)
@@ -219,7 +219,7 @@ async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
 
         with open("./logs/DeepAnt_Prediction.txt", "w") as f:
             f.write(json.dumps(results, indent=4))
-    except:
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     return_result = {"model_id":model_id, "result":results}
     return return_result
@@ -228,13 +228,13 @@ async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
 def read_data(path, features):
     
     data = pd.read_csv(path)
-    if type(features) == list:
+    if type(features) is list:
         features = features
     else:
         features = [features]
     try:
         data.Time = pd.to_datetime(data.Time)
-    except:
+    except Exception:
         data.Time = pd.to_datetime(data.Time.str.slice(1, -1))
     data = data.set_index(data.Time)
     data = data[features]
