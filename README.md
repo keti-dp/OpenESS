@@ -1,4 +1,4 @@
-# OpenESS(Energy Storage System) <a href="https://hits.sh/github.com/keti-dp/OpenESS/"><img src="https://hits.sh/github.com/keti-dp/OpenESS.svg?view=today-total&style=flat-square&label=hits&logo=github&labelColor=555555&color=79C83D" align="right"/></a>
+# OpenESS(Energy Storage System) <a href="https://hits.sh/github.com/keti-dp/OpenESS/"><img src="https://hits.sh/github.com/keti-dp/OpenESS.svg?view=today-total&label=hits&extraCount=10000&style=flat-square&logo=github&labelColor=555555&color=79C83D" align="right"/> </a>
 
 
 #### 과제명 : 대규모 분산 에너지 저장장치 인프라의 안전한 자율운영 및 성능 평가를 위한 지능형 SW 프레임워크 개발
