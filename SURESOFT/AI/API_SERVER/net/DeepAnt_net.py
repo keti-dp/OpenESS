@@ -32,7 +32,6 @@ class DeepAntNet(nn.Module):
         self.out = nn.Linear(40, self.n_feature)
 
     def forward(self, x):
-
         x = self.convblock1(x)
 
         x = self.convblock2(x)

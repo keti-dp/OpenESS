@@ -25,7 +25,6 @@ class DeepAnt_pred:
         return scaler
 
     def load_model(self, model_path):
-
         checkpoint = torch.load(model_path)
         features = checkpoint["features"]
         weights = checkpoint["weights"]
@@ -35,7 +34,6 @@ class DeepAnt_pred:
         return model, features
 
     def load_dataset(self, data):
-
         time_index = data.index.values[np.arange(10, len(data)).reshape(-1, 1)]
         data = self.__scaler.transform(data)
 
@@ -55,11 +53,10 @@ class DeepAnt_pred:
         return test_loader, time_index
 
     def anomaly_detection(self, test_loader, threshold):
-
         results = self.__model.testing(test_loader)
         if threshold != 0.0:
             results = [result > threshold for result in results]
-        
+
         return results
 
 
@@ -79,10 +76,8 @@ class DeepAnt_train:
     @classmethod
     def save_scaler(cls, scaler, id_num):
         joblib.dump(scaler, f"./model/deepant_scaler_{id_num}.pkl")
-        
 
     def load_dataset(self, data):
-
         train_data = data[: int(np.floor(0.7 * data.shape[0]))]
         val_data = data[
             int(np.floor(0.7 * data.shape[0])) : int(np.floor(data.shape[0]))
@@ -132,10 +127,9 @@ class DeepAnt_train:
         return history
 
     def save_model(self, id_num, dataset_path: str, es_epochs: int = None):
-
         torch.save(
             {
-                "features": self.features, 
+                "features": self.features,
                 "weights": self.model.state_dict(),
                 "params": {
                     "n_epochs": self.n_epochs,
@@ -147,4 +141,3 @@ class DeepAnt_train:
             },
             f"./model/deepant_model_{id_num}.pth",
         )
-        

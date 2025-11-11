@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import joblib
-import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 import torch
-from torch.utils.data import Dataset, DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset
 
 from train.USAD_train import UsadModel
 
@@ -35,7 +34,6 @@ class USAD_train:
     @classmethod
     def save_scaler(cls, scaler, id_num):
         joblib.dump(scaler, f"./model/usad_scaler_{id_num}.pkl")
-        
 
     def load_dataset(self, data, dim, features):
         self.features = features
@@ -78,7 +76,6 @@ class USAD_train:
         return train_loader, val_loader
 
     def fit(self, train_loader, val_loader, lr, es_epochs):
-
         self.model = UsadModel(self.w_size, self.z_size)
         print(self.model)
         self.model = self.model.to_device(self.model, self.model.device)
@@ -86,9 +83,7 @@ class USAD_train:
 
         return history
 
-
     def save_model(self, id_num, dataset_path: str, es_epochs: int = None):
-        
         torch.save(
             {
                 "feature": self.features,
@@ -107,8 +102,6 @@ class USAD_train:
             },
             f"./model/usad_model_{id_num}.pth",
         )
-        
-
 
 
 class USAD_pred:
@@ -127,23 +120,16 @@ class USAD_pred:
         return scaler
 
     def load_model(self, model_path):
-
         checkpoint = torch.load(model_path)
         features = checkpoint["feature"]
         w_size = checkpoint["encoder"]["linear1.weight"].shape[1]
         z_size = checkpoint["encoder"]["linear3.weight"].shape[0]
-        params = checkpoint["params"]
-        n_epochs = params["n_epochs"]
-        es_epochs = params["es_epochs"]
-        lr = params["lr"]
-        batch_size = params["batch_size"]
-        hidden_size = params["hidden_size"]
         model = UsadModel(w_size, z_size)
         model.encoder.load_state_dict(checkpoint["encoder"])
         model.decoder1.load_state_dict(checkpoint["decoder1"])
         model.decoder2.load_state_dict(checkpoint["decoder2"])
         model = model.to_device(model, model.device)
-        
+
         return model, w_size, z_size, features
 
     def load_dataset(self, data):
@@ -170,8 +156,7 @@ class USAD_pred:
 
         return test_loader, time_index
 
-    def anomaly_detection(self, test_loader, threshold = 0.0):
-
+    def anomaly_detection(self, test_loader, threshold=0.0):
         results = self.__model.testing(test_loader)
         if threshold != 0.0:
             results = [result > threshold for result in results]

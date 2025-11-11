@@ -15,7 +15,6 @@ from USAD import USAD_train, USAD_pred
 from DeepAnt import DeepAnt_pred, DeepAnt_train
 
 
-
 class USADTrainSchema(BaseModel):
     dataset_path: str = "Train Dataset"
     dim: int = 128
@@ -28,10 +27,8 @@ class USADTrainSchema(BaseModel):
 
 
 class USADPredSchema(BaseModel):
-
     dataset_path: str = "Test Dataset"
     threshold: Optional[float] = "null"
-
 
 
 class DeepAntTrainSchema(BaseModel):
@@ -46,17 +43,17 @@ class DeepAntTrainSchema(BaseModel):
 class DeepAntPredSchema(BaseModel):
     dataset_path: str = "Test Dataset"
     threshold: Optional[float] = None
-    
-    
-    
+
+
 app = FastAPI()
 
 
-sys.stdout = open(os.devnull, 'w')
+sys.stdout = open(os.devnull, "w")
+
+
 @app.get("/")
 async def index():
-    
-    return {"message":"BMS Anomaly Detection Model API PAGE"}
+    return {"message": "BMS Anomaly Detection Model API PAGE"}
 
 
 @app.post(
@@ -68,8 +65,7 @@ async def index():
     },
 )
 async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
-    
-    id_num = len(glob.glob('./model/usad_model*.pth'))+1
+    id_num = len(glob.glob("./model/usad_model*.pth")) + 1
     try:
         DATASET_PATH = str(param.dataset_path)
         DIM = int(param.dim)
@@ -100,7 +96,7 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     usad.save_model(id_num)
-    return_result = {"id":id_num, "result":"USAD Model Training Done"}
+    return_result = {"id": id_num, "result": "USAD Model Training Done"}
     return return_result
 
 
@@ -112,12 +108,11 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
         500: {"description": "Internal Server Error"},
     },
 )
-async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
+async def USAD_pred_call(model_id: int, dataset: str = "./data/test.csv"):
     try:
         DATASET_PATH = str(dataset)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid Type Error")
-    
 
     USAD_SCALER_PATH = f"./model/usad_scaler_{model_id}.pkl"
     USAD_MODEL_PATH = f"./model/usad_model_{model_id}.pth"
@@ -141,7 +136,7 @@ async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
             f.write(json.dumps({x: y for x, y in zip(time_index, results)}, indent=4))
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    return_result = {"id":model_id, "result":result}
+    return_result = {"id": model_id, "result": result}
     return return_result
 
 
@@ -154,7 +149,7 @@ async def USAD_pred_call(model_id:int, dataset:str = './data/test.csv'):
     },
 )
 async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
-    id_num = len(glob.glob('./model/deepant_model*.pth')) + 1
+    id_num = len(glob.glob("./model/deepant_model*.pth")) + 1
     try:
         DATASET_PATH = str(param.dataset_path)
         LR = float(param.lr)
@@ -182,7 +177,7 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
         deepant.save_model(id_num)
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    return_result = {"model_id":id_num, "result":"deepant Model Training Done"}
+    return_result = {"model_id": id_num, "result": "deepant Model Training Done"}
     return return_result
 
 
@@ -194,13 +189,12 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
         500: {"description": "Internal Server Error"},
     },
 )
-async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
+async def DeepAnt_Predict(model_id: int = 1, dataset: str = "./data/test.csv"):
     try:
         model_id = int(model_id)
         DATASET_PATH = str(dataset)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid Type Value")
-    
 
     DEEPANT_SCALER_PATH = f"./model/deepant_scaler_{model_id}.pkl"
     DEEPANT_MODEL_PATH = f"./model/deepant_model_{model_id}.pth"
@@ -221,12 +215,11 @@ async def DeepAnt_Predict(model_id:int = 1, dataset:str = './data/test.csv'):
             f.write(json.dumps(results, indent=4))
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    return_result = {"model_id":model_id, "result":results}
+    return_result = {"model_id": model_id, "result": results}
     return return_result
 
 
 def read_data(path, features):
-    
     data = pd.read_csv(path)
     if type(features) is list:
         features = features
