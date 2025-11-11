@@ -5,7 +5,7 @@
 > OpenESS 저장소는 본 과제를 수행함에 있어 필요한 에너지 데이터 플랫폼, 안전 AI 분석 엔진, 지능형 안전SW 프레임워크, 공개SW 서비스에 관한 소스코드를 공개하고자 개설되었습니다.
 
 <br>
-
+![overview](https://user-images.githubusercontent.com/85736845/144805380-ed4c2986-8f8d-4a18-b0d1-6e282f6ef8c1.png)
 [![Hits](https://hits.sh/github.com/USER/REPO.svg?view=today-total)](https://hits.sh/github.com/USER/REPO/)
 <br>
 
