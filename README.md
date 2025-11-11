@@ -6,8 +6,7 @@
 
 <br>
 
-![overview](https://user-images.githubusercontent.com/85736845/144805380-ed4c2986-8f8d-4a18-b0d1-6e282f6ef8c1.png)
-
+[![Hits](https://hits.sh/github.com/USER/REPO.svg?view=today-total)](https://hits.sh/github.com/USER/REPO/)
 <br>
 
 ## 주요 특징
