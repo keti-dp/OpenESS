@@ -1,6 +1,6 @@
 [project]
-name = "api-server"
-version = "0.1.0"
+name = "SURESOFT_api-server"
+version = "1.1.0"
 requires-python = ">=3.9.18"
 dependencies = [
     "fastapi==0.103.0",
@@ -8,5 +8,6 @@ dependencies = [
     "pandas==2.2.0",
     "pydantic==2.5.3",
     "scikit-learn==1.5.0",
+    "torch==2.2.0",
     "uvicorn==0.20.0",
 ]
