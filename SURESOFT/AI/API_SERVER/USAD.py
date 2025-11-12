@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from train.USAD_train import UsadModel
+from train.USAD_trainer import UsadModel
 
 """
 Audibert, J., Michiardi, P., Guyard, F., Marti, S., Zuluaga, M. A. (2020).

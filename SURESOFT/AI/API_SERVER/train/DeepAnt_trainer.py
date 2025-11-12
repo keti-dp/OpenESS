@@ -29,7 +29,6 @@ class DeepAntModel(nn.Module):
         return data.to(device, non_blocking=True)
 
     def training_step(self, batch):
-
         x, y = batch
         y_pred = self.model(x)
         loss = self.lossfn(y_pred, y)

@@ -95,7 +95,7 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
         )
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    usad.save_model(id_num)
+    usad.save_model(id_num, DATASET_PATH, ES_EPOCHS)
     return_result = {"id": id_num, "result": "USAD Model Training Done"}
     return return_result
 
@@ -174,7 +174,7 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
             lr=LR,
             es_epochs=ES_EPOCHS,
         )
-        deepant.save_model(id_num)
+        deepant.save_model(id_num, DATASET_PATH, ES_EPOCHS)
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
     return_result = {"model_id": id_num, "result": "deepant Model Training Done"}
