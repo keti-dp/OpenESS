@@ -1,12 +1,13 @@
 import pandas as pd
 
+
 def label_anomaly_ranges(
-        df: pd.DataFrame,
-        timestamp_col: str = "timestamp",
-        anomaly_ranges=None,
-        timezone: str = "Asia/Seoul",
-        save_path: str = None
-    ):
+    df: pd.DataFrame,
+    timestamp_col: str = "timestamp",
+    anomaly_ranges=None,
+    timezone: str = "Asia/Seoul",
+    save_path: str = None,
+):
     """
     Label anomaly ranges (Answer = 1/0) based on given timestamp intervals.
 
@@ -38,7 +39,9 @@ def label_anomaly_ranges(
         raise ValueError("anomaly_ranges must be provided")
 
     # timestamp 변환 (timezone-aware)
-    df[timestamp_col] = pd.to_datetime(df[timestamp_col], utc=True).dt.tz_convert(timezone)
+    df[timestamp_col] = pd.to_datetime(df[timestamp_col], utc=True).dt.tz_convert(
+        timezone
+    )
 
     # Answer 초기화
     df["Answer"] = 0
@@ -46,12 +49,10 @@ def label_anomaly_ranges(
     # 구간 라벨링
     for start, end in anomaly_ranges:
         start_t = pd.to_datetime(start)
-        end_t  = pd.to_datetime(end)
+        end_t = pd.to_datetime(end)
 
         df.loc[
-            (df[timestamp_col] >= start_t) &
-            (df[timestamp_col] <= end_t),
-            "Answer"
+            (df[timestamp_col] >= start_t) & (df[timestamp_col] <= end_t), "Answer"
         ] = 1
 
     # 저장 옵션

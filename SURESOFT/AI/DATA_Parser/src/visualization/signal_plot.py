@@ -1,14 +1,17 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-def plot_rack_signals(df: pd.DataFrame,
-                      columns=None,
-                      timestamp_col: str = "timestamp",
-                      title: str = "Rack Anomaly Signals",
-                      save_path: str = None):
+
+def plot_rack_signals(
+    df: pd.DataFrame,
+    columns=None,
+    timestamp_col: str = "timestamp",
+    title: str = "Rack Anomaly Signals",
+    save_path: str = None,
+):
     """
     Plot rack anomaly-related signals using Plotly.
-    
+
     Parameters
     ----------
     df : pd.DataFrame
@@ -21,7 +24,7 @@ def plot_rack_signals(df: pd.DataFrame,
         Title of the plot
     save_path : str
         If provided, the plot will be saved as an HTML file
-        
+
     Returns
     -------
     fig : plotly.graph_objects.Figure
@@ -29,7 +32,7 @@ def plot_rack_signals(df: pd.DataFrame,
 
     # Default columns
     if columns is None:
-        columns = ['max_runtime', 'temp_dt', 'stack_use', 'sio_interrupt4']
+        columns = ["max_runtime", "temp_dt", "stack_use", "sio_interrupt4"]
 
     # Timestamp 처리
     if timestamp_col in df.columns:
@@ -42,12 +45,7 @@ def plot_rack_signals(df: pd.DataFrame,
 
     for col in columns:
         if col in df.columns:
-            fig.add_trace(go.Scatter(
-                x=x_axis,
-                y=df[col],
-                mode='lines',
-                name=col
-            ))
+            fig.add_trace(go.Scatter(x=x_axis, y=df[col], mode="lines", name=col))
         else:
             print(f"⚠️ Warning: column {col} not found in dataframe.")
 
@@ -58,7 +56,7 @@ def plot_rack_signals(df: pd.DataFrame,
         yaxis_title="Value",
         template="plotly_white",
         legend_title="Signals",
-        hovermode="x unified"
+        hovermode="x unified",
     )
 
     # 저장 옵션 (HTML로 저장)

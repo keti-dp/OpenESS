@@ -7,6 +7,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 plt.style.use("seaborn-v0_8")
 
+
 def plot_usad_history(csv_path: str, save_path: str = "./output/USAD_history"):
     """
     USAD 모델 학습 이력 시각화
@@ -15,13 +16,13 @@ def plot_usad_history(csv_path: str, save_path: str = "./output/USAD_history"):
     df = pd.read_csv(csv_path)
 
     plt.figure(figsize=(10, 5))
-    plt.plot(df['val_loss1'], label='Val Loss 1', linewidth=2)
-    plt.plot(df['val_loss2'], label='Val Loss 2', linewidth=2)
+    plt.plot(df["val_loss1"], label="Val Loss 1", linewidth=2)
+    plt.plot(df["val_loss2"], label="Val Loss 2", linewidth=2)
 
     plt.title("USAD Validation Loss", fontsize=16, fontweight="bold")
     plt.xlabel("Epoch", fontsize=12)
     plt.ylabel("Validation Loss", fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.grid(True, linestyle="--", alpha=0.5)
     plt.legend(fontsize=12)
 
     if save_path:
@@ -38,23 +39,18 @@ def plot_deepant_history(csv_path: str, save_path: str = "./output/DeepAnT_histo
     df = pd.read_csv(csv_path)
 
     plt.figure(figsize=(10, 5))
-    plt.plot(df['val_loss'], label='Val Loss', linewidth=2, color='tab:orange')
+    plt.plot(df["val_loss"], label="Val Loss", linewidth=2, color="tab:orange")
 
     plt.title("DeepAnT Validation Loss", fontsize=16, fontweight="bold")
     plt.xlabel("Epoch", fontsize=12)
     plt.ylabel("Validation Loss", fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.grid(True, linestyle="--", alpha=0.5)
     plt.legend(fontsize=12)
 
     if save_path:
         plt.savefig(save_path, dpi=200, bbox_inches="tight")
     else:
         plt.show()
-
-
-
-
-
 
 
 def plot_threshold_metrics(
@@ -65,7 +61,7 @@ def plot_threshold_metrics(
     threshold_min: float = 0.0,
     threshold_max: float = 1.0,
     threshold_step: float = 0.005,
-    save_path: str = None
+    save_path: str = None,
 ):
     """
     Plot Precision / Recall / F1 over a range of thresholds,
@@ -103,7 +99,9 @@ def plot_threshold_metrics(
     y_true = df[label_col].values
     scores = df[score_col].values
 
-    thresholds = np.arange(threshold_min, threshold_max + threshold_step, threshold_step)
+    thresholds = np.arange(
+        threshold_min, threshold_max + threshold_step, threshold_step
+    )
 
     precisions, recalls, f1s = [], [], []
 
@@ -127,24 +125,30 @@ def plot_threshold_metrics(
     # ----------------------------------------------
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(x=thresholds, y=precisions, mode='lines', name='Precision'))
-    fig.add_trace(go.Scatter(x=thresholds, y=recalls, mode='lines', name='Recall'))
-    fig.add_trace(go.Scatter(x=thresholds, y=f1s, mode='lines', name='F1 Score'))
+    fig.add_trace(
+        go.Scatter(x=thresholds, y=precisions, mode="lines", name="Precision")
+    )
+    fig.add_trace(go.Scatter(x=thresholds, y=recalls, mode="lines", name="Recall"))
+    fig.add_trace(go.Scatter(x=thresholds, y=f1s, mode="lines", name="F1 Score"))
 
     # Best Threshold V-line
     fig.add_vline(
         x=best_threshold,
-        line_width=2, line_dash="dash", line_color="red",
+        line_width=2,
+        line_dash="dash",
+        line_color="red",
         annotation_text=f"Best Th = {best_threshold:.3f}",
-        annotation_position="top right"
+        annotation_position="top right",
     )
 
     # Best F1 H-line
     fig.add_hline(
         y=best_f1,
-        line_width=2, line_dash="dot", line_color="blue",
+        line_width=2,
+        line_dash="dot",
+        line_color="blue",
         annotation_text=f"Best F1 = {best_f1:.3f}",
-        annotation_position="bottom right"
+        annotation_position="bottom right",
     )
 
     fig.update_layout(
@@ -152,7 +156,7 @@ def plot_threshold_metrics(
         xaxis_title="Threshold",
         yaxis_title="Metric",
         template="plotly_white",
-        hovermode="x unified"
+        hovermode="x unified",
     )
 
     # Save if requested

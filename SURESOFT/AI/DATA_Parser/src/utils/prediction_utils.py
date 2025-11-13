@@ -2,17 +2,18 @@ import numpy as np
 import pandas as pd
 import datetime
 
+
 def __logistic_scaled(x, k=10, x0=0.3):
-    return 1 / (1 + np.exp(-k*(x - x0)))
+    return 1 / (1 + np.exp(-k * (x - x0)))
 
 
 def load_prediction_log(
-        json_path: str,
-        k: float,
-        x0: float,
-        time_shift_sec: int = 0,
-        timezone: str = "Asia/Seoul"
-    ):
+    json_path: str,
+    k: float,
+    x0: float,
+    time_shift_sec: int = 0,
+    timezone: str = "Asia/Seoul",
+):
     """
     Load a prediction log (JSON series), fix timezone, apply time shift,
     logistic scaling, and normalize columns to TIMESTAMP / VALUE.
@@ -42,10 +43,7 @@ def load_prediction_log(
     series = pd.read_json(json_path, typ="series")
 
     # Timezone 처리
-    series.index = (
-        series.index.tz_localize("UTC")
-                    .tz_convert(timezone)
-    )
+    series.index = series.index.tz_localize("UTC").tz_convert(timezone)
 
     # 시간 보정
     if time_shift_sec != 0:
@@ -59,5 +57,3 @@ def load_prediction_log(
     df = df.rename(columns={"index": "TIMESTAMP", 0: "VALUE"})
 
     return df
-
-

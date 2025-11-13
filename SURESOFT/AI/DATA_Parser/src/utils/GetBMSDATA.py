@@ -5,7 +5,6 @@ import threading
 import os
 
 
-
 class BMS:
     def __init__(
         self,
@@ -68,7 +67,9 @@ class BMS:
         if not os.path.isdir(os.getcwd() + "/output/"):
             os.mkdir(os.getcwd() + "/output/")
         savefile = open(self.file_name, "w")
-        savefile.write("Time,CPU_usage,stack_usage,heap_current,heap_max,temperature,timestamp,\n")
+        savefile.write(
+            "Time,CPU_usage,stack_usage,heap_current,heap_max,temperature,timestamp,\n"
+        )
         savefile.close()
 
         print("GPS Data Record Start!")
