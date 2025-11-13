@@ -8,8 +8,6 @@ from src.utils.prediction_utils import load_prediction_log
 from src.evaluation import get_score
 
 
-
-
 def main():
     # 학습 History Plot
     plot_usad_history("./data/USAD_history.csv")
@@ -32,36 +30,32 @@ def main():
         ("2024-11-14 06:55:00+09", "2024-11-14 07:01:00+09"),
     ]
 
-    df = label_anomaly_ranges(df, anomaly_ranges=anomaly_ranges, save_path="./output/rack_anomaly_251111.csv")
-
+    df = label_anomaly_ranges(
+        df, anomaly_ranges=anomaly_ranges, save_path="./output/rack_anomaly_251111.csv"
+    )
 
     # USAD
     df_usad = load_prediction_log(
         json_path="./data/USAD_Prediction.txt",
         k=1,
         x0=0.5,
-        time_shift_sec=128  # USAD 특성
+        time_shift_sec=128,  # USAD 특성
     )
 
     # DeepAnT
     df_deepant = load_prediction_log(
-        json_path="./data/DeepAnt_Prediction.txt",
-        k=0.45,
-        x0=1.5,
-        time_shift_sec=0
+        json_path="./data/DeepAnt_Prediction.txt", k=0.45, x0=1.5, time_shift_sec=0
     )
     df_usad_score, usad_metrics = get_score(df, df_usad, thres=0.435)
     df_deepant_score, deepant_metrics = get_score(df, df_deepant, thres=0.485)
 
     fig, best_th, best_f1 = plot_threshold_metrics(
-        df=df_usad_score,
-        name="USAD",
-        save_path="output/USAD_threshold_curve.html"
+        df=df_usad_score, name="USAD", save_path="output/USAD_threshold_curve.html"
     )
     fig, best_th, best_f1 = plot_threshold_metrics(
         df=df_deepant_score,
         name="DeepAnT",
-        save_path="output/deepant_threshold_curve.html"
+        save_path="output/deepant_threshold_curve.html",
     )
 
 
