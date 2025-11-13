@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import json
-import os
+
 
 import pandas as pd
 import numpy as np
@@ -30,7 +30,7 @@ def main(options):
         DIM = 10
 
     # Set Features
-    if type(options.features) == list:
+    if type(options.features) is list:
         FEATURES = options.features
     else:
         FEATURES = [options.features]
@@ -43,12 +43,12 @@ def main(options):
 
     print(FEATURES)
 
-    if DATA_L == None:
+    if DATA_L is None:
         data = pd.read_csv(DATA)
         data = data[data["CPU usage"] > 0]
         try:
             data.Time = pd.to_datetime(data.Time)
-        except:
+        except Exception:
             data.Time = pd.to_datetime(data.Time.str.slice(1, -1))
         data = data.set_index(data.Time)
         data = data[FEATURES]
@@ -118,8 +118,6 @@ def main(options):
             USAD_MODEL_PATH = "./model/lstm_usad_model.pth"
             USAD_THRESHOLD = options.threshold
 
-            # data = data.iloc[128:128+1024]
-            # print(data)
 
             usad_model = LSTM_USAD_pred(USAD_SCALER_PATH, USAD_MODEL_PATH)
 
@@ -139,8 +137,6 @@ def main(options):
 
     elif options.model == "deepant":
         if options.mode == "train":
-            # train
-
             deepant = DeepAnt_train(BATCH_SIZE, N_EPOCHS, LR, N_FEATURES)
             data = deepant.fit_scaler(data)
             train_loader, val_loader = deepant.load_dataset(data)
@@ -214,21 +210,3 @@ if __name__ == "__main__":
     options = parser.parse_args()
 
     main(options)
-
-
-""""
-
-USAD
-
-/train
-/pred 
-
-
-
-DeepAnt
-/train
-/pred
-
-
-
-"""
