@@ -12,7 +12,6 @@ class LSTMEncoder(nn.Module):
         self.hidden_to_latent = nn.Linear(hidden_dim, latent_dim)
 
     def forward(self, x):
-
         _, (h, _) = self.lstm1(x)
         latent = self.hidden_to_latent(h[-1])
 

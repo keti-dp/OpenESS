@@ -41,7 +41,6 @@ class LSTM_USAD_train:
         pass
 
     def load_dataset(self, data, dim, features):
-
         current = data[
             np.arange(dim)[None, :] + np.arange(data.shape[0] - dim, step=dim)[:, None]
         ]
@@ -78,7 +77,6 @@ class LSTM_USAD_train:
         return train_loader, val_loader
 
     def fit(self, train_loader, val_loader, lr, es_epochs):
-
         self.model = LSTMUsadModel(self.w_size, self.z_size)
         print(self.model)
         self.model = self.model.to_device(self.model, self.model.device)
@@ -87,7 +85,6 @@ class LSTM_USAD_train:
         return history
 
     def save_model(self, FEATURES):
-
         torch.save(
             {
                 "features": FEATURES,
@@ -114,7 +111,6 @@ class LSTM_USAD_pred:
         return scaler
 
     def load_model(self, model_path):
-
         checkpoint = torch.load(model_path)
 
         w_size = checkpoint["encoder"]["lstm1.weight_ih_l0"].shape[1]
@@ -151,7 +147,6 @@ class LSTM_USAD_pred:
         return test_loader, time_index
 
     def anomaly_detection(self, test_loader):
-
         result = self.model.testing(test_loader)
         print("Predict Done")
         return result

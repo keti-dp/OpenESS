@@ -12,7 +12,6 @@ from LSTMUSAD import LSTM_USAD_train, LSTM_USAD_pred
 
 
 def main(options):
-
     # Define Dataset
     DATA_L = None
     if str(options.dataset).endswith("/"):
@@ -58,7 +57,6 @@ def main(options):
         raise NotImplementedError
 
     if options.model == "usad":
-
         if options.mode == "train":
             # Train Param
 
@@ -77,7 +75,6 @@ def main(options):
             usad.save_model()
 
         elif options.mode == "pred":
-
             USAD_SCALER_PATH = "./model/usad_scaler.pkl"
             USAD_MODEL_PATH = "./model/usad_model.pth"
             USAD_THRESHOLD = options.threshold
@@ -98,7 +95,6 @@ def main(options):
 
             return result
     elif options.model == "lstm_usad":
-
         if options.mode == "train":
             # Train Param
 
@@ -118,7 +114,6 @@ def main(options):
             usad.save_model(FEATURES)
 
         elif options.mode == "pred":
-
             USAD_SCALER_PATH = "./model/usad_scaler.pkl"
             USAD_MODEL_PATH = "./model/lstm_usad_model.pth"
             USAD_THRESHOLD = options.threshold
@@ -143,9 +138,7 @@ def main(options):
             return result
 
     elif options.model == "deepant":
-
         if options.mode == "train":
-
             # train
 
             deepant = DeepAnt_train(BATCH_SIZE, N_EPOCHS, LR, N_FEATURES)
@@ -163,7 +156,6 @@ def main(options):
             deepant.save_model()
 
         elif options.mode == "pred":
-
             DEEPANT_SCALER_PATH = "./model/deepant_scaler.pkl"
             DEEPANT_MODEL_PATH = "./model/deepant_model.pth"
             DEEPANT_THRESHOLD = options.threshold
@@ -181,7 +173,6 @@ def main(options):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
 
     # Dataset Path

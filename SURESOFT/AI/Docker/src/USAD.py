@@ -41,7 +41,6 @@ class USAD_train:
         pass
 
     def load_dataset(self, data, dim, features):
-
         current = data[
             np.arange(dim)[None, :] + np.arange(data.shape[0] - dim, step=10)[:, None]
         ]
@@ -81,7 +80,6 @@ class USAD_train:
         return train_loader, val_loader
 
     def fit(self, train_loader, val_loader, lr, es_epochs):
-
         self.model = UsadModel(self.w_size, self.z_size)
         print(self.model)
         self.model = self.model.to_device(self.model, self.model.device)
@@ -90,7 +88,6 @@ class USAD_train:
         return history
 
     def save_model(self):
-
         torch.save(
             {
                 "encoder": self.model.encoder.state_dict(),
@@ -116,7 +113,6 @@ class USAD_pred:
         return scaler
 
     def load_model(self, model_path):
-
         checkpoint = torch.load(model_path)
 
         w_size = checkpoint["encoder"]["linear1.weight"].shape[1]
@@ -151,7 +147,6 @@ class USAD_pred:
         return test_loader, time_index
 
     def anomaly_detection(self, test_loader):
-
         result = self.__model.testing(test_loader)
         print("Predict Done")
         return result
