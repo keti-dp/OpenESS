@@ -77,7 +77,6 @@ def main(options):
         elif options.mode == "pred":
             USAD_SCALER_PATH = "./model/usad_scaler.pkl"
             USAD_MODEL_PATH = "./model/usad_model.pth"
-            USAD_THRESHOLD = options.threshold
 
             # data = data.iloc[128:128+1024]
             # print(data)
@@ -116,7 +115,6 @@ def main(options):
         elif options.mode == "pred":
             USAD_SCALER_PATH = "./model/usad_scaler.pkl"
             USAD_MODEL_PATH = "./model/lstm_usad_model.pth"
-            USAD_THRESHOLD = options.threshold
 
 
             usad_model = LSTM_USAD_pred(USAD_SCALER_PATH, USAD_MODEL_PATH)
@@ -154,7 +152,6 @@ def main(options):
         elif options.mode == "pred":
             DEEPANT_SCALER_PATH = "./model/deepant_scaler.pkl"
             DEEPANT_MODEL_PATH = "./model/deepant_model.pth"
-            DEEPANT_THRESHOLD = options.threshold
 
             deepant_model = DeepAnt_pred(DEEPANT_SCALER_PATH, DEEPANT_MODEL_PATH)
             test_loader, time_index = deepant_model.load_dataset(data)
