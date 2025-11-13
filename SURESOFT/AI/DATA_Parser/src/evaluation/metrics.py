@@ -55,12 +55,12 @@ def get_score(
     # 2) timestamp 타임존/타입 정리 (둘 다 같은 timezone & 타입으로 맞추기)
     df_gt[timestamp_col_gt] = (
         pd.to_datetime(df_gt[timestamp_col_gt], utc=True)
-        .dt.tz_convert(timezone)
+        .dt.tz_convert(timezone).astype('datetime64[ns, UTC]')
     )
 
     df_score[timestamp_col_pred] = (
         pd.to_datetime(df_score[timestamp_col_pred], utc=True)
-        .dt.tz_convert(timezone)
+        .dt.tz_convert(timezone).astype('datetime64[ns, UTC]')
     )
 
     # 3) merge_asof 로 시간 매칭

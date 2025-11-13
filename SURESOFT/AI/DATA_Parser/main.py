@@ -1,11 +1,12 @@
 import pandas as pd
 
 from src.visualization.history_plot import plot_usad_history, plot_deepant_history
+from src.visualization.history_plot import plot_threshold_metrics
 from src.visualization.signal_plot import plot_rack_signals
 from src.utils.label_utils import label_anomaly_ranges
-
 from src.utils.prediction_utils import load_prediction_log
-from logistic_function import logistic_scaled  # 기존 함수
+from src.evaluation import get_score
+
 
 
 
@@ -35,22 +36,34 @@ def main():
 
 
     # USAD
-    usad = load_prediction_log(
+    df_usad = load_prediction_log(
         json_path="./data/USAD_Prediction.txt",
-        logistic_fn=logistic_scaled,
         k=1,
         x0=0.5,
         time_shift_sec=128  # USAD 특성
     )
 
     # DeepAnT
-    deepant = load_prediction_log(
+    df_deepant = load_prediction_log(
         json_path="./data/DeepAnt_Prediction.txt",
-        logistic_fn=logistic_scaled,
         k=0.45,
         x0=1.5,
         time_shift_sec=0
     )
+    df_usad_score, usad_metrics = get_score(df, df_usad, thres=0.435)
+    df_deepant_score, deepant_metrics = get_score(df, df_deepant, thres=0.485)
+
+    fig, best_th, best_f1 = plot_threshold_metrics(
+        df=df_usad_score,
+        name="USAD",
+        save_path="output/USAD_threshold_curve.html"
+    )
+    fig, best_th, best_f1 = plot_threshold_metrics(
+        df=df_deepant_score,
+        name="DeepAnT",
+        save_path="output/deepant_threshold_curve.html"
+    )
+
 
 if __name__ == "__main__":
     main()
