@@ -11,7 +11,7 @@
 참고 및 출처 : https://semver.org/lang/ko/
 
 
-현재 버전 ver 2.4.7 / 2023년 01월 04일 14시 20분 기준
+현재 버전 ver 2.5.7 / 2025년 11월 14일 11시 20분 기준
 
 
 
@@ -19,30 +19,51 @@
 1. 프로젝트 중 아래에 파일에서 명시된 라이브러리에 대해 각각의 라이선스가 적용되어있습니다.
 
 
-data_loss_rate.py - pandas - 3-Clause BSD License       
+data_loss_rate.py                - pandas          - 3-Clause BSD License       
 
-logs.py - ecs_logging - Apache License 2.0
-kafka_oper1.py - kafka-python - Apache License 2.0
-kafka_oper2_bank1.py - kafka-python - Apache License 2.0
-kafka_oper2_bank2.py - kafka-python - Apache License 2.0
-kafka_oper3.py - kafka-python - Apache License 2.0
+logs.py                          - ecs_logging     - Apache License 2.0
+
+kafka_oper1.py                   - kafka-python    - Apache License 2.0
+kafka_oper2_bank1.py             - kafka-python    - Apache License 2.0
+kafka_oper2_bank2.py             - kafka-python    - Apache License 2.0
+kafka_oper3.py                   - kafka-python    - Apache License 2.0
 modbus_client_oper1_kafka+protectionmap.py - kafka-python - Apache License 2.0
 
-modbus_client_oper1.py - pymodbusTCP - MIT License
-modbus_client_oper1_kafka.py - pymodbusTCP - MIT License
-modbus_client_oper2_bank1.py - pymodbusTCP - MIT License
-modbus_client_oper2_bank2.py - pymodbusTCP - MIT License
+modbus_client_oper1.py           - pymodbusTCP     - MIT License
+modbus_client_oper1_kafka.py     - pymodbusTCP     - MIT License
+modbus_client_oper2_bank1.py     - pymodbusTCP     - MIT License
+modbus_client_oper2_bank2.py     - pymodbusTCP     - MIT License
 modbus_client_oper1_kafka+protectionmap.py - pymodbusTCP - MIT License
 modbus_client_oper3_kafka+protectionmap.py - pymodbusTCP - MIT License
 
+indexing_module.py               - psycopg2        - GNU Lesser General Public License (LGPL, with exceptions)
+timescale_input_data.py          - psycopg2        - GNU Lesser General Public License (LGPL, with exceptions)
 
-indexing_module.py - psycopg2 - GNU General Public License (GPLv2)
+google_storage_class.py          - google-cloud-storage (storage) - Apache License 2.0
 
-timescale_input_data.py - psycopg2 - GNU General Public License (GPLv2)
+docker_monitoring.py             - docker, telegram - Apache License 2.0, GNU General Public License (GPLv3)
 
-google_storage_class.py - storage - Apache License 2.0
+novus_webhook.py                 - Flask, docker, psycopg2
+                                 - BSD 3-Clause License, Apache License 2.0,
+                                   GNU Lesser General Public License (LGPL, with exceptions)
 
-docker_monitoring.py - docker, telegram - Apache License 2.0, GNU General Public License (GPLv3)
+sos_batch.py                     - psycopg2, NumPy, pandas
+                                 - GNU Lesser General Public License (LGPL, with exceptions),
+                                   3-Clause BSD License, 3-Clause BSD License
+
+sos_container.py                 - psycopg2, NumPy
+                                 - GNU Lesser General Public License (LGPL, with exceptions),
+                                   3-Clause BSD License
+
+data_modifier.py                 - pandas, NumPy, SciPy
+                                 - 3-Clause BSD License, 3-Clause BSD License, 3-Clause BSD License
+
+simulator.py                     - Matplotlib, pandas, NumPy
+                                 - BSD-style License, 3-Clause BSD License, 3-Clause BSD License
+
+
+
+
 
         ---------------------------------------------------------------------------
         Copyright(C) 2021, 윤태일 / KETI / taeil777@keti.re.kr
