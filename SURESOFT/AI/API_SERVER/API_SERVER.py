@@ -3,7 +3,7 @@ import sys
 import os
 import glob
 import json
-
+import re
 
 import numpy as np
 import pandas as pd
@@ -11,6 +11,7 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+import torch
 from USAD import USAD_train, USAD_pred
 from DeepAnt import DeepAnt_pred, DeepAnt_train
 
@@ -84,6 +85,41 @@ async def USAD_train_call(param: USADTrainSchema = USADTrainSchema):
     usad = USAD_train(
         batch_size=BATCH_SIZE, n_epochs=N_EPOCHS, lr=LR, hidden_size=HIDDEN_SIZE
     )
+    
+    current_params = {
+        "dim": DIM,
+        "hidden_size": HIDDEN_SIZE,
+        "n_epochs": N_EPOCHS,
+        "es_epochs": ES_EPOCHS,
+        "lr": LR,
+        "batch_size": BATCH_SIZE,
+    }
+    
+    candidates = []
+    
+    for path in glob.glob("./model/usad_model_*.pth"):
+        try:
+            ckpt = torch.load(path, map_location="cpu", weights_only=True)
+            params = ckpt.get("params", {})
+            dataset = ckpt.get("dataset", None)
+            
+            if params == current_params and dataset == os.path.basename(DATASET_PATH):
+                mtime = os.path.getmtime(path)
+                candidates.append((mtime, path))
+        except Exception as e:
+            print(f"Could not read {path}: {e}")
+    
+    if candidates:
+        
+        latest_path = max(candidates, key=lambda x: x[0])[1]
+        print(f"Found existing model with same params/features: {latest_path}")
+        
+        m = re.search(r"usad_model_(\d+)\.pth$", os.path.basename(latest_path))
+        exist_id = int(m.group(1)) if m else latest_path
+        
+        return_result = {"id":exist_id, "result":"USAD Model Already Exists"}
+        return return_result
+
     try:
         data = usad.fit_scaler(data, id_num)
         train_loader, val_loader = usad.load_dataset(data, DIM, FEATURES)
@@ -119,8 +155,10 @@ async def USAD_pred_call(model_id: int, dataset: str = "./data/test.csv"):
 
     # # data = data.iloc[128:128+1024]
     # # print(data)
-
-    usad_model = USAD_pred(USAD_SCALER_PATH, USAD_MODEL_PATH)
+    try:
+        usad_model = USAD_pred(USAD_SCALER_PATH, USAD_MODEL_PATH)
+    except Exception:
+        raise HTTPException(status_code=404, detail="Model Not Found Exception")
     try:
         data, features = read_data(DATASET_PATH, usad_model.features)
     except Exception:
@@ -158,12 +196,44 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
         FEATURES = param.features
         ES_EPOCHS = int(param.es_epochs)
     except Exception:
-        HTTPException(status_code=400, detail="Invalid Type Value")
+        raise HTTPException(status_code=400, detail="Invalid Type Value")
 
     try:
         data, FEATURES = read_data(DATASET_PATH, FEATURES)
     except Exception:
-        raise HTTPException(status_code=404, deatil="Not Found Exception")
+        raise HTTPException(status_code=404, detail="Not Found Exception")
+    
+    current_params = {
+    "n_epochs": N_EPOCHS,
+    "es_epochs": ES_EPOCHS,
+    "lr": LR,
+    "batch_size": BATCH_SIZE,
+    }
+
+    candidates = []
+    
+    for path in glob.glob("./model/deepant_model_*.pth"):
+        try:
+            ckpt = torch.load(path, map_location="cpu", weights_only=True)
+            params = ckpt.get("params", {})
+            dataset = ckpt.get("dataset", None)
+
+            if params == current_params and dataset == os.path.basename(DATASET_PATH):
+                mtime = os.path.getmtime(path)
+                candidates.append((mtime, path))
+        except Exception as e:
+            print(f"Could not read {path}: {e}")
+
+    if candidates:
+        latest_path = max(candidates, key=lambda x: x[0])[1]
+        print(f"Found existing DeepAnt model with same params/dataset: {latest_path}")
+
+        m = re.search(r"deepant_model_(\d+)\.pth$", os.path.basename(latest_path))
+        exist_id = int(m.group(1)) if m else latest_path
+
+        return {"model_id": exist_id, "result": "DeepAnt Model Already Exists"}
+
+    
     try:
         deepant = DeepAnt_train(BATCH_SIZE, N_EPOCHS, LR, FEATURES)
         data = deepant.fit_scaler(data, id_num)
@@ -177,7 +247,7 @@ async def DeepAnt_Train(param: DeepAntTrainSchema = DeepAntTrainSchema):
         deepant.save_model(id_num, DATASET_PATH, ES_EPOCHS)
     except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    return_result = {"model_id": id_num, "result": "deepant Model Training Done"}
+    return_result = {"model_id": id_num, "result": "DeepAnt Model Training Done"}
     return return_result
 
 
@@ -198,12 +268,14 @@ async def DeepAnt_Predict(model_id: int = 1, dataset: str = "./data/test.csv"):
 
     DEEPANT_SCALER_PATH = f"./model/deepant_scaler_{model_id}.pkl"
     DEEPANT_MODEL_PATH = f"./model/deepant_model_{model_id}.pth"
-
-    deepant_model = DeepAnt_pred(DEEPANT_SCALER_PATH, DEEPANT_MODEL_PATH)
+    try:
+        deepant_model = DeepAnt_pred(DEEPANT_SCALER_PATH, DEEPANT_MODEL_PATH)
+    except Exception:
+        raise HTTPException(status_code=404, detail="Model Not Found Exception")
     try:
         data, __ = read_data(DATASET_PATH, deepant_model.features)
     except Exception:
-        HTTPException(status_code=404, deatil="Not Found Exception")
+        raise HTTPException(status_code=404, detail="Not Found Exception")
     try:
         test_loader, time_index = deepant_model.load_dataset(data)
         results = deepant_model.anomaly_detection(test_loader, 0.0)
@@ -229,6 +301,6 @@ def read_data(path, features):
         data.Time = pd.to_datetime(data.Time)
     except Exception:
         data.Time = pd.to_datetime(data.Time.str.slice(1, -1))
-    data = data.set_index(data.Time)
+    data = data.set_index(data.Time).sort_index()
     data = data[features]
     return data, features
