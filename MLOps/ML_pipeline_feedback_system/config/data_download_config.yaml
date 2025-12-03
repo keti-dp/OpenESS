@@ -1,0 +1,46 @@
+# 데이터 다운로드 DAG 설정
+# dag_daily_data_download.py 전용
+
+sites:
+  # 사이트별 설정 예시
+  # example_site:
+  #   name: "예시 사이트"
+  #   description: "예시 사이트 설명"
+  #   gcp:
+  #     project_name: "YOUR-GCP-PROJECT"
+  #     bucket_name: "your-bucket-name"
+  #     credential_path: "/path/to/your/credential.json"
+  #   paths:
+  #     data_dir: "/path/to/data/example_site"
+
+  default_site:
+    name: "기본 사이트"
+    description: "기본 배터리 ESS 시스템"
+
+    gcp:
+      project_name: "YOUR-GCP-PROJECT"
+      bucket_name: "your-bucket-name"
+      credential_path: "/path/to/your/credential.json"
+
+    paths:
+      data_dir: "/path/to/data/default_site"
+
+    # 데이터 특성
+    data:
+      # 다운로드할 데이터 종류(bank, rack, etc, pcs)
+      data_types:
+        - "rack"
+      # 최신 파일 유지 개수 (GCS에 적용)
+      retention_file_count: 35
+
+# 기본 설정
+defaults:
+  # Airflow DAG 기본 설정
+  airflow:
+    daily_download_schedule: "0 2 * * *"  # 매일 오전 2시
+    # 최대 동시 실행 수
+    max_active_runs: 1
+    # 재시도 횟수
+    retries: 2
+    # 재시도 지연시간 (분)
+    retry_delay_minutes: 10

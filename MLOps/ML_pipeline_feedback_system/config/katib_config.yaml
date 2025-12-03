@@ -1,0 +1,98 @@
+# Katib 하이퍼파라미터 튜닝 DAG 설정 (v1)
+# dag_katib_tuning.py 전용
+#
+# v1 주요 기능:
+# - Trial job에서 모델을 GCS에 직접 저장
+# - 베스트 모델 자동 식별 및 복사
+# - 하이퍼파라미터와 모델 모두 GCS에 저장
+
+sites:
+  # 사이트별 설정 예시
+  # example_site:
+  #   name: "예시 사이트"
+  #   description: "예시 사이트 설명"
+
+  default_site:
+    name: "기본 사이트"
+    description: "기본 배터리 ESS 시스템"
+
+# 기본 설정
+defaults:
+  # Airflow DAG 기본 설정
+  airflow:
+    monthly_training_schedule: "0 3 1 * *"  # 매월 1일 오전 3시
+    # 최대 동시 실행 수
+    max_active_runs: 1
+    # 재시도 횟수
+    retries: 0
+    # 재시도 지연시간 (분)
+    retry_delay_minutes: 10
+
+  # Kubeflow 설정
+  kubeflow:
+    namespace: "your-namespace"  # Kubernetes 네임스페이스
+    katib_timeout: 1200  # 20분 (12 trials - 20분 실행 가능)
+    max_trial_count: 12  # 최대 trial 수 (10~100 권장)
+    parallel_trial_count: 3  # 병렬 실행 trial 수
+    training_image: "your-training-image:tag"  # 학습용 Docker 이미지
+
+    # Katib Early Stopping 설정
+    early_stopping:
+      enabled: true  # early stopping 사용 여부
+      algorithm: "medianstop"  # medianstop 알고리즘
+      min_trials_required: 10  # 최소 trial 수 (이 수 이상의 trial이 완료되어야 early stopping 시작)
+      start_step: 5  # early stopping 시작 시점 (이 스텝부터 성능 비교 시작)
+
+    # Katib 하이퍼파라미터 탐색 범위
+    katib_parameters:
+      xgboost:
+        # 학습률 (learning rate, eta)
+        # 작을수록: 안정적, 느림 / 클수록: 빠름, 불안정(일반적으로 0.01~0.3 사이 값 사용)
+        - name: learning_rate
+          type: double
+          min: "0.01"
+          max: "0.3"
+
+        # 트리의 최대 깊이
+        # 작을수록: 단순한 모델, 과소적합 위험 / 클수록: 복잡한 모델, 과적합 위험(일반적으로 3~10 사이 값 사용)
+        - name: max_depth
+          type: int
+          min: "3"
+          max: "10"
+
+        # 부스팅 라운드 수 (트리 개수)
+        # 많을수록: 성능 향상, 학습 시간 증가, 과적합 위험(early stopping과 함께 사용 권장)
+        - name: n_estimators
+          type: int
+          min: "100"
+          max: "3000"
+          step: "100"
+
+        # 각 트리를 학습할 때 사용할 샘플 비율 (행 샘플링)
+        # 작을수록: 과적합 방지, 학습 속도 향상(0.5~0.8이 일반적)
+        - name: subsample
+          type: double
+          min: "0.5"
+          max: "0.8"
+
+        # 각 트리를 학습할 때 사용할 피처 비율 (열 샘플링)
+        # 작을수록: 과적합 방지, 피처 간 상관관계 감소(0.6~0.9가 일반적)
+        - name: colsample_bytree
+          type: double
+          min: "0.6"
+          max: "0.9"
+
+        # 자식 노드에 필요한 최소 샘플 가중치 합
+        # 클수록: 보수적인 분할, 과적합 방지(불균형 데이터에서 특히 중요)
+        - name: min_child_weight
+          type: int
+          min: "1"
+          max: "10"
+
+        # 트리 분할을 위한 최소 손실 감소량 (gamma, min_split_loss)
+        # 클수록: 보수적인 분할, 과적합 방지 강화 (0이면 제약 없음, 노이즈가 많은 데이터에 효과적)
+        - name: gamma
+          type: double
+          min: "0.1"
+          max: "5.0"
+          step: "0.2"
