@@ -16,13 +16,18 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from utils.common import ensure_directory_exists, get_gcs_client
 
-# 사이트 ID 지정
-SITE_ID = 'panly'
+# 사이트 ID 환경 변수에서 가져오기 (기본값: 첫 번째 사이트)
+SITE_ID = os.getenv('SITE_ID', None)
 
 # data_download_config.yaml 로드
 config_path = Path(__file__).parent / 'config' / 'data_download_config.yaml'
 with open(config_path, 'r', encoding='utf-8') as f:
     config = yaml.safe_load(f)
+
+# SITE_ID가 환경 변수로 지정되지 않은 경우 첫 번째 사이트 사용
+if SITE_ID is None:
+    SITE_ID = list(config['sites'].keys())[0]
+    print(f"Warning: SITE_ID 환경 변수가 설정되지 않아 첫 번째 사이트 '{SITE_ID}'를 사용합니다.")
 
 if SITE_ID not in config['sites']:
     raise ValueError(f"사이트 '{SITE_ID}'를 찾을 수 없습니다. 사용 가능한 사이트: {list(config['sites'].keys())}")
@@ -54,9 +59,9 @@ def download_daily_data(**context):
     save_dir = site_config['paths']['data_dir']
     data_types = site_config['data']['data_types']
 
-    # GCS 목적지 설정
-    dest_bucket_name = 'keti-airflow-dataset'
-    dest_blob_prefix = f'rack-ori-data/{SITE_ID}/'
+    # GCS 목적지 설정 (환경 변수 또는 설정 파일 사용)
+    dest_bucket_name = os.getenv('DEST_BUCKET_NAME', site_config.get('gcs_destination', {}).get('bucket_name', 'destination-bucket'))
+    dest_blob_prefix = os.getenv('DEST_BLOB_PREFIX', f'rack-ori-data/{SITE_ID}/')
 
     # 디렉토리 생성 (임시 저장용)
     ensure_directory_exists(save_dir)
@@ -106,9 +111,9 @@ def check_data_quality(**context):
     # GCS 클라이언트 초기화
     storage_client = get_gcs_client(site_config['gcp']['credential_path'])
 
-    # GCS 버킷 및 prefix 파싱
-    dest_bucket_name = 'keti-airflow-dataset'
-    dest_blob_prefix = f'rack-ori-data/{SITE_ID}/'
+    # GCS 버킷 및 prefix 파싱 (환경 변수 또는 설정 파일 사용)
+    dest_bucket_name = os.getenv('DEST_BUCKET_NAME', site_config.get('gcs_destination', {}).get('bucket_name', 'destination-bucket'))
+    dest_blob_prefix = os.getenv('DEST_BLOB_PREFIX', f'rack-ori-data/{SITE_ID}/')
     bucket = storage_client.bucket(dest_bucket_name)
 
     # 해당 날짜의 parquet 파일 찾기
@@ -175,8 +180,9 @@ def cleanup_old_data(**context):
     from google.cloud import storage
 
     retention_file_count = site_config['data']['retention_file_count']
-    dest_bucket_name = 'keti-airflow-dataset'
-    dest_blob_prefix = f'rack-ori-data/{SITE_ID}/'
+    # 환경 변수 또는 설정 파일에서 버킷 정보 가져오기
+    dest_bucket_name = os.getenv('DEST_BUCKET_NAME', site_config.get('gcs_destination', {}).get('bucket_name', 'destination-bucket'))
+    dest_blob_prefix = os.getenv('DEST_BLOB_PREFIX', f'rack-ori-data/{SITE_ID}/')
 
     print(f"[{site_config['name']}] GCS에서 최신 {retention_file_count}개 파일만 유지")
     print(f"대상: gs://{dest_bucket_name}/{dest_blob_prefix}")

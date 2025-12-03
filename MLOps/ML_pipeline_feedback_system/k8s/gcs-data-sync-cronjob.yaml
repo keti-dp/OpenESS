@@ -1,0 +1,114 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: gcs-data-sync
+  namespace: space-openess
+spec:
+  # 매일 새벽 2시 30분 (한국 시간 기준)
+  schedule: "30 2 * * *"
+
+  # 타임존 설정 (한국 시간)
+  timeZone: "Asia/Seoul"
+
+  # 성공/실패한 Job 히스토리 보관 개수
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  # 이전 Job이 아직 실행 중이면 새 Job을 건너뜀
+  concurrencyPolicy: Forbid
+
+  jobTemplate:
+    spec:
+      # Job이 실패하면 최대 2번 재시도
+      backoffLimit: 2
+
+      template:
+        metadata:
+          labels:
+            app: gcs-data-sync
+          annotations:
+            # Istio sidecar가 메인 컨테이너 종료 후 자동으로 종료되도록 설정
+            sidecar.istio.io/inject: "true"
+            proxy.istio.io/config: '{"holdApplicationUntilProxyStarts": true}'
+            # 메인 컨테이너 종료 시 istio-proxy도 종료
+            traffic.sidecar.istio.io/excludeOutboundPorts: "443"
+        spec:
+          containers:
+          - name: gcs-sync
+            image: google/cloud-sdk:alpine
+
+            env:
+            # 환경 변수로 GCS 경로 설정
+            - name: SOURCE_BUCKET
+              value: "destination-bucket"  # 실제 소스 버킷 이름으로 변경
+            - name: SOURCE_PREFIX
+              value: "rack-ori-data/site-id"  # 실제 경로로 변경
+            - name: TARGET_DIR
+              value: "/data/site-id/data"  # 실제 타겟 경로로 변경
+
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+
+              echo "=== GCS Data Sync Started at $(date) ==="
+
+              # GCP 서비스 계정 인증
+              echo "Authenticating with GCP..."
+              gcloud auth activate-service-account --key-file=/var/secrets/google/key.json
+
+              # PVC 내부에 타겟 폴더 생성
+              echo "Creating target directory in PVC..."
+              mkdir -p ${TARGET_DIR}
+
+              # GCS에서 데이터 동기화
+              echo "Syncing data from GCS bucket..."
+              echo "Source: gs://${SOURCE_BUCKET}/${SOURCE_PREFIX}"
+              echo "Target: ${TARGET_DIR} (ess-dataset PVC)"
+
+              gsutil -m rsync -r -d \
+                gs://${SOURCE_BUCKET}/${SOURCE_PREFIX} \
+                ${TARGET_DIR}
+
+              echo "=== Sync completed successfully at $(date) ==="
+              echo "Files synced to ess-dataset PVC:"
+              ls -lh ${TARGET_DIR} | head -20
+
+              # 파일 개수 확인
+              FILE_COUNT=$(find ${TARGET_DIR} -type f | wc -l)
+              echo "Total files synced: $FILE_COUNT"
+
+              # 성공 시 istio-proxy에 종료 신호 전송
+              echo "Sending quit signal to istio-proxy..."
+              curl -X POST http://localhost:15020/quitquitquit || true
+
+              echo "=== Job completed ==="
+
+            volumeMounts:
+            - name: gcp-credentials
+              mountPath: /var/secrets/google
+              readOnly: true
+            - name: ess-dataset
+              mountPath: /data
+
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "500m"
+
+          volumes:
+          - name: gcp-credentials
+            secret:
+              secretName: gcp-credentials
+              items:
+              - key: key.json
+                path: key.json
+          - name: ess-dataset
+            persistentVolumeClaim:
+              claimName: ess-dataset
+
+          restartPolicy: OnFailure
