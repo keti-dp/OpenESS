@@ -400,7 +400,7 @@ def run_katib_experiment(
     yearmonth = datetime.now().strftime('%Y%m')  # yyyymm
 
     # 파일명: yyyymm_xgboost_site_id.json
-    site_id = experiment_name_prefix  # 'panly'
+    site_id = experiment_name_prefix  # site_id from experiment name prefix
     filename = f"{yearmonth}_xgboost_{site_id}.json"
 
     result = {
