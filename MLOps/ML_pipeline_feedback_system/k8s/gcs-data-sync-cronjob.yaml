@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: gcs-data-sync
-  namespace: space-openess
+  namespace: your-namespace
 spec:
   # 매일 새벽 2시 30분 (한국 시간 기준)
   schedule: "30 2 * * *"

@@ -1,0 +1,67 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: xgboost-default-predictor
+  namespace: your-namespace
+  labels:
+    app: xgboost-predictor
+    site: default_site
+    managed-by: airflow
+  annotations:
+    autoscaling.knative.dev/minScale: "1"
+    autoscaling.knative.dev/maxScale: "5"
+    autoscaling.knative.dev/target: "10"
+    deployment.info/last-updated: "2025-01-01T00:00:00Z"
+    deployment.info/model-version: "initial"
+
+spec:
+  predictor:
+    serviceAccountName: kserve-sa
+
+    model:
+      modelFormat:
+        name: xgboost
+
+      storageUri: gs://your-gcs-bucket/vt-model/default_site/model-deploy/
+
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2Gi
+        requests:
+          cpu: "500m"
+          memory: 1Gi
+
+      runtime: kserve-mlserver
+
+      env:
+        - name: MLSERVER_MODEL_IMPLEMENTATION
+          value: mlserver_xgboost.XGBoostModel
+        - name: MLSERVER_MODEL_NAME
+          value: xgboost-default-predictor
+        # GCS 인증을 위한 환경변수
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
+
+    minReplicas: 1
+    maxReplicas: 5
+
+---
+# GCS 인증을 위한 ServiceAccount
+# Secret 'gcp-credentials'가 이미 존재해야 함:
+# kubectl create secret generic gcp-credentials \
+#   -n your-namespace \
+#   --from-file=key.json=/path/to/gcp-service-account-key.json
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kserve-sa
+  namespace: your-namespace
+secrets:
+  - name: gcp-credentials
+
+---
+# KServe가 GCS Secret을 자동으로 마운트하도록 설정
+# kserve-sa ServiceAccount에 gcp-credentials Secret 연결 후
+# KServe는 자동으로 /var/secrets/google/key.json에 마운트합니다

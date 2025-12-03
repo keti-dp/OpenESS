@@ -60,7 +60,7 @@ def run_katib_tuning(**context):
     early_stopping_config = kubeflow_config.get('early_stopping', {})
 
     katib_params = {
-        'namespace': kubeflow_config.get('namespace', 'space-openess'),
+        'namespace': kubeflow_config.get('namespace', 'your-namespace'),
         'experiment_name_prefix': SITE_ID,
         'timeout': kubeflow_config.get('katib_timeout', 7200),
         'max_trial_count': kubeflow_config.get('max_trial_count', 30),

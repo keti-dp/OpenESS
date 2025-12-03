@@ -1,0 +1,66 @@
+gcs:
+  bucket_name: your-gcs-bucket
+  base_path: vt-model
+  credentials_path: /path/to/your/credentials.json
+
+sites:
+  # 사이트별 설정 예시
+  # your_site_id:
+  #   site_id: your_site_id
+  #   namespace: your-namespace
+  #   paths:
+  #     models_dir: vt-model/your_site_id/models
+  #     deploy_dir: vt-model/your_site_id/model-deploy
+  #   kserve:
+  #     inference_service_name: xgboost-your-site-predictor
+  #     storage_uri: gs://your-bucket/vt-model/your_site_id/model-deploy/
+  #     endpoint: xgboost-your-site-predictor.your-namespace.svc.cluster.local
+
+  default_site:
+    site_id: default_site
+    namespace: your-namespace
+
+    paths:
+      models_dir: vt-model/default_site/models
+      deploy_dir: vt-model/default_site/model-deploy
+
+    deploy_files:
+      model: model.pkl
+      hyperparameters: hyperparameters.json
+      metadata: metadata.json
+      deployment_history: deployment_history.json
+
+    kserve:
+      inference_service_name: xgboost-default-predictor
+      model_format: xgboost
+      storage_uri: gs://your-gcs-bucket/vt-model/default_site/model-deploy/
+
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2Gi
+        requests:
+          cpu: "500m"
+          memory: 1Gi
+
+      endpoint: xgboost-default-predictor.your-namespace.svc.cluster.local
+
+    validation:
+      min_improvement_rmse: 0.02
+      max_degradation_r2: 0.01
+
+airflow:
+  default_args:
+    owner: airflow
+    email_on_failure: true
+    email: ml-team@your-company.com
+    retries: 0
+    retry_delay_minutes: 5
+
+  notifications:
+    slack_webhook: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+    teams_webhook: https://outlook.office.com/webhook/YOUR/WEBHOOK/URL
+
+logging:
+  level: INFO
+  format: "[%(asctime)s] [%(levelname)s] %(message)s"

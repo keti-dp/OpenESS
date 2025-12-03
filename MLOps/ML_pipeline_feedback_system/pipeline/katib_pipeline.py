@@ -256,7 +256,7 @@ def run_katib_experiment(
     # Secret 생성 방법:
     # kubectl create secret generic gcp-credentials \
     #   --from-file=key.json=/path/to/credential.json \
-    #   -n space-openess
+    #   -n your-namespace
     katib_client = KatibClient()
 
     try:
