@@ -1,0 +1,85 @@
+base:
+  BATTERY_STATUS_FOR_CHARGE: 3
+  decay: 0.9
+  drop_last: false
+  epochs: 200
+  experiment: true
+  input_cols:
+  - V
+  - I
+  - T
+  - V_gap
+  log_file: /data/ess/output/State_Estimation/Operating-SOC/cnn2023-10-20_18:05:05/base_log.txt
+  loss_fn: L1Loss
+  model: res18
+  num_workers: 0
+  seconds: 15
+  split_ratio:
+  - 90
+  - 10
+  - 0
+  target_col:
+  - OCV
+  task: estimation
+  test_batch_size: 8
+  train_batch_size: 32
+common:
+  data_per_oneday: 8
+  debug: false
+  epochs: 200
+  folder_name: /data/ess/output/State_Estimation/Operating-SOC/cnn2023-10-20_18:05:05
+  loss_fn: L1Loss
+  output_dir: /data/ess/output/State_Estimation/Operating-SOC
+  output_name: /cnn
+  reproducing_config: null
+  seed: 3
+  site: sionyu
+phase1:
+  BATTERY_STATUS_FOR_CHARGE: 3
+  decay: 0.9
+  drop_last: false
+  epochs: 200
+  input_cols:
+  - V
+  - I
+  - T
+  - V_gap
+  log_file: /data/ess/output/State_Estimation/Operating-SOC/cnn2023-10-20_18:05:05/phase1_log.txt
+  loss_fn: L1Loss
+  model: res10
+  num_workers: 0
+  seconds: 15
+  split_ratio:
+  - 90
+  - 10
+  - 0
+  target_col:
+  - SOC
+  task: estimation
+  test_batch_size: 8
+  train_batch_size: 32
+phase2:
+  BATTERY_STATUS_FOR_CHARGE: 3
+  decay: 0.9
+  drop_last: false
+  epochs: 200
+  input_cols:
+  - V
+  - I
+  - T
+  - V_gap
+  - SOC
+  log_file: /data/ess/output/State_Estimation/Operating-SOC/cnn2023-10-20_18:05:05/phase2_log.txt
+  loss_fn: L1Loss
+  model: res10
+  num_workers: 0
+  seconds: 15
+  split_ratio:
+  - 90
+  - 10
+  - 0
+  target_col:
+  - OCV
+  task: estimation
+  test_batch_size: 8
+  train_batch_size: 32
