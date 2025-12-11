@@ -1,0 +1,22 @@
+base_folder: '' # log folder to estimate
+model: null # model file (.pt) to estimate
+state_dict: null # state dict file (.pt) to estimate
+save_data: False # whether save test data or not
+dataset: null # ESS_panli/ESS_gold/ESS_white
+
+evaluate:
+  check_count: 5000 # check count of window computing
+  smooth_scores: False # option for smoothing scores (ewma)
+  smoothing_weight: 0.9 # ewma weight when smoothing socres
+  modified_ess: False # modified ess scores (not used now)
+  min_anomaly_rate: 0.001 # minimum threshold rate
+  max_anomaly_rate: 0.3 # maximum threshold rate
+
+data:
+  temperature_anomaly: 0.2 # probability for temperature anomaly
+  voltage_gap: 0.2 # probability for voltage gap degradation
+  soft_replacing: 0.4 # probability for soft replacement
+  uniform_replacing: 0 # probability for uniform replacement
+  peak_noising: 0 # probability for peak noise
+  white_noising: 0 # probability for white noise (deprecated)
+  deg_num: null # the number of degradation in test data

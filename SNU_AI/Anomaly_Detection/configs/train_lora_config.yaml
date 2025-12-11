@@ -1,0 +1,6 @@
+batch_size: 16
+lr: 1e-6
+max_steps: 500000 # maximum_training_steps
+summary_steps: 500 # steps for summarizing and saving of training log
+grad_clip_norm: 1.0
+window_sliding: 512 # sliding steps of windows for validation

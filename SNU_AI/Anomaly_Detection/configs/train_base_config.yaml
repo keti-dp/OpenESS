@@ -1,0 +1,26 @@
+dataset: 'ESS_panli' # ESS_panli/ESS_gold/ESS_white
+batch_size: 16
+lr: 1e-4
+max_steps: 150000 # maximum_training_steps
+summary_steps: 500 # steps for summarizing and saving of training log
+grad_clip_norm: 1.0
+window_sliding: 512 # sliding steps of windows for validation
+
+network:
+  n_features: 512 # number of features for a window
+  patch_size: 90 # number of data points in a patch
+  d_embed: 512 # embedding dimension of feature
+  n_layer: 6 # number of transformer layers
+  dropout: 0.1
+
+data:
+  replacing_rate_max: 0.15 # maximum ratio of replacing interval length to window size
+  temperature_anomaly: 0.2 # probability for temperature anomaly
+  voltage_gap: 0.2 # probability for voltage gap degradation
+  soft_replacing: 0.4 # probability for soft replacement
+  uniform_replacing: 0.0 # probability for uniform replacement
+  peak_noising: 0.0 # probability for peak noise
+  white_noising: 0.0 # probability for white noise (deprecated)
+  deg_num: null # the number of degradation in test data
+  flip_replacing_interval: 'all' # allowance for random flipping in soft replacement; vertical/horizontal/all/none
+  replacing_weight: 0.7 # weight for external interval in soft replacement
