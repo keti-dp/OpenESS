@@ -1,0 +1,1 @@
+from .vec2vec import vec2vec_decoder
