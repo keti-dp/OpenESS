@@ -1,0 +1,10 @@
+###  사용법  ###
+
+preprocess 된 panli,sionyu parquet 파일들이 있는 폴더 명 ex) /data/ess/data/incell/year45_preprocessed/2
+============================================================================
+
+python3 SOC_slope_panli_ver.py /data/ess/data/incell/year45_preprocessed/2 
+
+============================================================================
+
+panli_sample.png 파일 output으로 나옴

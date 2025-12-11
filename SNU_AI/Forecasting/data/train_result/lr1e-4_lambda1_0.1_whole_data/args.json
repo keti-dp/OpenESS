@@ -1,0 +1,17 @@
+{
+  "gpu_id": 0,
+  "data_dir": "./SoC_synthesis",
+  "epoch": 50,
+  "batch_size": 10,
+  "save_path": "./delta_labmda1/lr1e-4_lambda1_0.1_whole_data",
+  "optimizer": "adamw",
+  "num_layers": 2,
+  "dropout": 0.1,
+  "lr": 0.0001,
+  "min_lr": 1e-06,
+  "warmup_epochs": 5,
+  "chunk_len": 1024,
+  "output_scale": 100.0,
+  "lambda1": 0.1,
+  "lambda2": 1.0
+}

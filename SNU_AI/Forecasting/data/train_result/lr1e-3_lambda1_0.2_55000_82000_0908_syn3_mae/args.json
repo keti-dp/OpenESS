@@ -1,0 +1,20 @@
+{
+  "gpu_id": 0,
+  "data_dir": "./data/SoC_synthesis3",
+  "epoch": 50,
+  "batch_size": 8,
+  "save_path": "./data/train_result/lr1e-3_lambda1_0.2_55000_82000_0908_syn3_mae",
+  "optimizer": "adamw",
+  "num_layers": 2,
+  "dropout": 0.1,
+  "lr": 0.001,
+  "min_lr": 1e-06,
+  "loss": "mae",
+  "warmup_epochs": 5,
+  "chunk_len": 1024,
+  "output_scale": 100.0,
+  "lambda1": 0.2,
+  "lambda2": 1.0,
+  "start": 55000,
+  "end": 82000
+}
