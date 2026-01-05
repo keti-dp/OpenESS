@@ -100,7 +100,7 @@ def calculate_gain_and_covariance_cell(phi, P, forgetting_factor):
     gain_denominator = forgetting_factor + phi.T @ P @ phi 
     gain = P_phi / gain_denominator
     covariance = (P - gain @ phi.T @ P) / forgetting_factor
-    covariance = np.clip(covariance, 0, 0.001) 
+    covariance = np.clip(covariance, 0, 0.01) 
     return gain, covariance
 
 def process_condition_for_cycle(condition_dir, cycle_num, condition_name):
