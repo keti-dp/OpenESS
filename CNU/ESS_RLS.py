@@ -232,6 +232,7 @@ plt.title('RlsVoltageError Over Time')
 plt.legend()
 plt.show()
 
+
 # Covariance Update 값 플롯
 plt.figure(figsize=(10, 6))
 plt.plot(covariance_values[:, 0], label='Covariance[0]')
