@@ -1,0 +1,314 @@
+# 사이트별 설정 파일
+# 새로운 사이트 추가 시 이 파일에 설정만 추가하면 됩니다.
+
+sites:
+  baekma:
+    # 데이터베이스 설정
+    db_conn_id: "baekma_site"
+    stats_conn_id: "ess_stats"
+
+    # 테이블 설정
+    tables:
+      count: "ess_socp_count_oper4"
+      count_diff: "ess_socp_count_diff_oper4"
+      info: "ess_socp_info_oper4"
+      moving_avg: "ess_socp_moving_avg_oper4"
+
+    # 파일 경로 설정
+    paths:
+      base: "~/airflow/dags/calc_socp/dataset/baekma"
+      original: "~/airflow/dags/calc_socp/dataset/baekma/original/"
+      count_work: "~/airflow/dags/calc_socp/dataset/baekma/count/work_data/"
+      count_prep: "~/airflow/dags/calc_socp/dataset/baekma/count/prep_data/"
+      count_diff: "~/airflow/dags/calc_socp/dataset/baekma/count/diff/"
+      info_period: "~/airflow/dags/calc_socp/dataset/baekma/info/period_dataset/"
+      info_prep: "~/airflow/dags/calc_socp/dataset/baekma/info/prep_dataset/"
+      moving_avg: "~/airflow/dags/calc_socp/dataset/baekma/moving_avg/"
+
+    # 사이트별 특수 설정
+    cell_count: 240
+    file_format: "parquet"
+    period: 1
+
+    # 쿼리 설정
+    query:
+      battery_status_columns:
+        - "BATTERY_STATUS_FOR_RUN"
+        - "BATTERY_STATUS_FOR_CHARGE"
+
+    # DAG 설정
+    dag:
+      owner: "jwpark"
+      start_date: "2025-11-10"
+      schedule_get_dataset: "10 4 * * *"
+      catchup: true
+      tags:
+        - "baekma"
+        - "socp"
+
+  gold:
+    # 데이터베이스 설정
+    db_conn_id: "gold_site"
+    stats_conn_id: "ess_stats"
+
+    # 테이블 설정
+    tables:
+      count: "ess_socp_count_oper3"
+      count_diff: "ess_socp_count_diff_oper3"
+      info: "ess_socp_info_oper3"
+      moving_avg: "ess_socp_moving_avg_oper3"
+
+    # 파일 경로 설정
+    paths:
+      base: "~/airflow/dags/calc_socp/dataset/gold"
+      original: "~/airflow/dags/calc_socp/dataset/gold/original/"
+      count_work: "~/airflow/dags/calc_socp/dataset/gold/count/work_data/"
+      count_prep: "~/airflow/dags/calc_socp/dataset/gold/count/prep_data/"
+      count_diff: "~/airflow/dags/calc_socp/dataset/gold/count/diff/"
+      info_period: "~/airflow/dags/calc_socp/dataset/gold/info/period_dataset/"
+      info_prep: "~/airflow/dags/calc_socp/dataset/gold/info/prep_dataset/"
+      moving_avg: "~/airflow/dags/calc_socp/dataset/gold/moving_avg/"
+
+    # 사이트별 특수 설정
+    cell_count: 204
+    file_format: "parquet"
+    period: 1
+
+    # 쿼리 설정
+    query:
+      battery_status_columns:
+        - "BATTERY_STATUS_FOR_RUN"
+        - "BATTERY_STATUS_FOR_CHARGE"
+
+    # DAG 설정
+    dag:
+      owner: "jwpark"
+      start_date: "2025-11-10"
+      schedule_get_dataset: "10 4 * * *"
+      catchup: true
+      tags:
+        - "gold"
+        - "socp"
+
+  panly:
+    # 데이터베이스 설정
+    db_conn_id: "panly_site"
+    stats_conn_id: "ess_stats"
+
+    # 테이블 설정
+    tables:
+      count: "ess_socp_count_oper2"
+      count_diff: "ess_socp_count_diff_oper2"
+      info: "ess_socp_info_oper2"
+      moving_avg: "ess_socp_moving_avg_oper2"
+
+    # 파일 경로 설정
+    paths:
+      base: "~/airflow/dags/calc_socp/dataset/panly"
+      original: "~/airflow/dags/calc_socp/dataset/panly/original/"
+      count_work: "~/airflow/dags/calc_socp/dataset/panly/count/work_data/"
+      count_prep: "~/airflow/dags/calc_socp/dataset/panly/count/prep_data/"
+      count_diff: "~/airflow/dags/calc_socp/dataset/panly/count/diff/"
+      info_period: "~/airflow/dags/calc_socp/dataset/panly/info/period_dataset/"
+      info_prep: "~/airflow/dags/calc_socp/dataset/panly/info/prep_dataset/"
+      moving_avg: "~/airflow/dags/calc_socp/dataset/panly/moving_avg/"
+
+    # 사이트별 특수 설정
+    cell_count: 240
+    file_format: "feather"
+    period: 1
+
+    # 쿼리 설정
+    query:
+      battery_status_columns:
+        - "BATTERY_STATUS_FOR_STANDBY"
+        - "BATTERY_STATUS_FOR_CHARGE"
+        - "BATTERY_STATUS_FOR_DISCHARGE"
+
+    # DAG 설정
+    dag:
+      owner: "jwpark"
+      start_date: "2025-11-10"
+      schedule_get_dataset: "00 4 * * *"
+      catchup: false
+      tags:
+        - "panly"
+        - "socp"
+
+  # seongdeok:
+  #   # 데이터베이스 설정
+  #   db_conn_id: "seongdeok_site"
+  #   stats_conn_id: "ess_stats"
+
+  #   # 테이블 설정
+  #   tables:
+  #     count: "ess_socp_count_oper5"
+  #     count_diff: "ess_socp_count_diff_oper5"
+  #     info: "ess_socp_info_oper5"
+  #     moving_avg: "ess_socp_moving_avg_oper5"
+
+  #   # 파일 경로 설정
+  #   paths:
+  #     base: "~/airflow/dags/calc_socp/dataset/baekma"
+  #     original: "~/airflow/dags/calc_socp/dataset/baekma/original/"
+  #     count_work: "~/airflow/dags/calc_socp/dataset/baekma/count/work_data/"
+  #     count_prep: "~/airflow/dags/calc_socp/dataset/baekma/count/prep_data/"
+  #     count_diff: "~/airflow/dags/calc_socp/dataset/baekma/count/diff/"
+  #     info_period: "~/airflow/dags/calc_socp/dataset/baekma/info/period_dataset/"
+  #     info_prep: "~/airflow/dags/calc_socp/dataset/baekma/info/prep_dataset/"
+  #     moving_avg: "~/airflow/dags/calc_socp/dataset/baekma/moving_avg/"
+
+  #   # 사이트별 특수 설정
+  #   cell_count: 241
+  #   file_format: "parquet"
+  #   period: 1
+
+  #   # 쿼리 설정
+  #   query:
+  #     battery_status_columns:
+  #       - "BATTERY_STATUS_FOR_RUN"
+  #       - "BATTERY_STATUS_FOR_CHARGE"
+
+  #   # DAG 설정
+  #   dag:
+  #     owner: "jwpark"
+  #     start_date: "2024-12-11"
+  #     schedule_get_dataset: "10 4 * * *"
+  #     catchup: true
+  #     tags:
+  #       - "baekma"
+  #       - "socp"
+  # baekma:
+  #   # 데이터베이스 설정
+  #   db_conn_id: "baekma_site"
+  #   stats_conn_id: "ess_stats"
+
+  #   # 테이블 설정
+  #   tables:
+  #     count: "ess_socp_count_oper4"
+  #     count_diff: "ess_socp_count_diff_oper4"
+  #     info: "ess_socp_info_oper4"
+  #     moving_avg: "ess_socp_moving_avg_oper4"
+
+  #   # 파일 경로 설정
+  #   paths:
+  #     base: "~/airflow/dags/calc_socp/dataset/baekma"
+  #     original: "~/airflow/dags/calc_socp/dataset/baekma/original/"
+  #     count_work: "~/airflow/dags/calc_socp/dataset/baekma/count/work_data/"
+  #     count_prep: "~/airflow/dags/calc_socp/dataset/baekma/count/prep_data/"
+  #     count_diff: "~/airflow/dags/calc_socp/dataset/baekma/count/diff/"
+  #     info_period: "~/airflow/dags/calc_socp/dataset/baekma/info/period_dataset/"
+  #     info_prep: "~/airflow/dags/calc_socp/dataset/baekma/info/prep_dataset/"
+  #     moving_avg: "~/airflow/dags/calc_socp/dataset/baekma/moving_avg/"
+
+  #   # 사이트별 특수 설정
+  #   cell_count: 241
+  #   file_format: "parquet"
+  #   period: 1
+
+  #   # 쿼리 설정
+  #   query:
+  #     battery_status_columns:
+  #       - "BATTERY_STATUS_FOR_RUN"
+  #       - "BATTERY_STATUS_FOR_CHARGE"
+
+  #   # DAG 설정
+  #   dag:
+  #     owner: "jwpark"
+  #     start_date: "2024-12-11"
+  #     schedule_get_dataset: "10 4 * * *"
+  #     catchup: true
+  #     tags:
+  #       - "baekma"
+  #       - "socp"
+  # ========================================
+  # 새로운 사이트 추가 (oper5, oper6)
+  # ========================================
+
+  seongdeok:
+    # 데이터베이스 설정
+    db_conn_id: "seongdeok_site"
+    stats_conn_id: "ess_stats"
+
+    # 테이블 설정
+    tables:
+      count: "ess_socp_count_oper5"
+      count_diff: "ess_socp_count_diff_oper5"
+      info: "ess_socp_info_oper5"
+      moving_avg: "ess_socp_moving_avg_oper5"
+
+    # 파일 경로 설정
+    paths:
+      base: "~/airflow/dags/calc_socp/dataset/seongdeok"
+      original: "~/airflow/dags/calc_socp/dataset/seongdeok/original/"
+      count_work: "~/airflow/dags/calc_socp/dataset/seongdeok/count/work_data/"
+      count_prep: "~/airflow/dags/calc_socp/dataset/seongdeok/count/prep_data/"
+      count_diff: "~/airflow/dags/calc_socp/dataset/seongdeok/count/diff/"
+      info_period: "~/airflow/dags/calc_socp/dataset/seongdeok/info/period_dataset/"
+      info_prep: "~/airflow/dags/calc_socp/dataset/seongdeok/info/prep_dataset/"
+      moving_avg: "~/airflow/dags/calc_socp/dataset/seongdeok/moving_avg/"
+
+    # 사이트별 특수 설정
+    cell_count: 204
+    file_format: "parquet"
+    period: 1
+
+    # 쿼리 설정
+    query:
+      battery_status_columns:
+        - "BATTERY_STATUS_FOR_RUN"
+        - "BATTERY_STATUS_FOR_CHARGE"
+
+    # DAG 설정
+    dag:
+      owner: "jwpark"
+      start_date: "2025-11-12"
+      schedule_get_dataset: "10 4 * * *"
+      catchup: true
+      tags:
+        - "seongdeok"
+        - "socp"
+
+  seokhwan:
+    # 데이터베이스 설정
+    db_conn_id: "seokhwan_site"
+    stats_conn_id: "ess_stats"
+
+    # 테이블 설정
+    tables:
+      count: "ess_socp_count_oper6"
+      count_diff: "ess_socp_count_diff_oper6"
+      info: "ess_socp_info_oper6"
+      moving_avg: "ess_socp_moving_avg_oper6"
+
+    # 파일 경로 설정
+    paths:
+      base: "~/airflow/dags/calc_socp/dataset/seokhwan"
+      original: "~/airflow/dags/calc_socp/dataset/seokhwan/original/"
+      count_work: "~/airflow/dags/calc_socp/dataset/seokhwan/count/work_data/"
+      count_prep: "~/airflow/dags/calc_socp/dataset/seokhwan/count/prep_data/"
+      count_diff: "~/airflow/dags/calc_socp/dataset/seokhwan/count/diff/"
+      info_period: "~/airflow/dags/calc_socp/dataset/seokhwan/info/period_dataset/"
+      info_prep: "~/airflow/dags/calc_socp/dataset/seokhwan/info/prep_dataset/"
+      moving_avg: "~/airflow/dags/calc_socp/dataset/seokhwan/moving_avg/"
+
+    # 사이트별 특수 설정
+    cell_count: 240
+    file_format: "parquet"
+    period: 1
+
+    # 쿼리 설정
+    query:
+      battery_status_columns:
+        - "BATTERY_STATUS_FOR_RUN"
+        - "BATTERY_STATUS_FOR_CHARGE"
+
+    # DAG 설정
+    dag:
+      owner: "jwpark"
+      start_date: "2025-11-12"
+      schedule_get_dataset: "10 4 * * *"
+      catchup: true
+      tags:
+        - "seokhwan"
+        - "socp"
