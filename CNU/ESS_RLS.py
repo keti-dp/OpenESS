@@ -7,9 +7,9 @@
 # 황금 Bank 1(Rack 11개, Rack 1개당 Tray 17S, Tray 1개당 12S60P --> Rack 1개당 204*60P)
 # 컨테이너(Bank 1만) : 1,826kWh
 
-rack_data = pd.read_csv('D:/내 과제/한국전자기술연구원/ESS 운영사이트 이상현상 관련 자료/판리 2호/판리/20240315_rack.csv')
-#rack_data = pd.read_csv('D:/내 과제/한국전자기술연구원/ESS 운영사이트 이상현상 관련 자료/백마/24.05.09/20240406_rack.csv')
-#rack_data = pd.read_csv('D:/내 과제/한국전자기술연구원/ESS 운영사이트 이상현상 관련 자료/황금 6호/황금6호/20230921_rack.csv')
+rack_data = pd.read_csv('')
+#rack_data = pd.read_csv('')
+#rack_data = pd.read_csv('')
 
 rack_voltage = rack_data[(rack_data['BANK_ID'] == 1) & (rack_data['RACK_ID'] == 1)]['RACK_VOLTAGE'].values
 rack_current = rack_data[(rack_data['BANK_ID'] == 1) & (rack_data['RACK_ID'] == 1)]['RACK_CURRENT'].values
@@ -17,9 +17,9 @@ rack_soc = rack_data[(rack_data['BANK_ID'] == 1) & (rack_data['RACK_ID'] == 1)][
 
 SOC = np.linspace(1, 0, num=21)
 
-OCV_PL2 = loadmat('D:/내 과제/한국전자기술연구원/매트랩 코드/OCV_PL2_real.mat')['OCV_PL2_real'].flatten()
-OCV_BM = loadmat('D:/내 과제/한국전자기술연구원/매트랩 코드/OCV_BM_real.mat')['OCV_BM_real'].flatten()
-OCV_HG = loadmat('D:/내 과제/한국전자기술연구원/매트랩 코드/OCV_HG_real.mat')['OCV_HG_real'].flatten()
+OCV_PL2 = loadmat('')['OCV_PL2_real'].flatten()
+OCV_BM = loadmat('')['OCV_BM_real'].flatten()
+OCV_HG = loadmat('')['OCV_HG_real'].flatten()
 
 OCV_ESS = OCV_PL2
 
